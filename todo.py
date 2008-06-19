@@ -4,7 +4,7 @@
 TODO.TXT Manager
 Author: FND (http://fnd.lewcid.org/blog/)
 License: GPL, http://www.gnu.org/copyleft/gpl.html
-Version: 1.5.2-py
+Version: 2.0.0 alpha
 
 Based on concept by Gina Trapani (http://todotxt.com) and original Python port by Shane Koster.
 """
@@ -12,10 +12,10 @@ Based on concept by Gina Trapani (http://todotxt.com) and original Python port b
 # To Do -- DEBUG: temporary
 # * read settings from file
 # * implement date threshold for tasks (items appearing in list only after a certain date)
-# * change license to BSD (mailto:shane.koster@gmail.com for permission?)
 # * error handling for file I/O
 # * Epydoc: default values for optional function arguments
 # * i18n: move strings to separate object
+# * use YAML?
 
 import sys
 import os
@@ -64,7 +64,6 @@ priorityRE = re.compile(r".*(\([A-Z]\)).*") # DEBUG: use r"^\([A-Z]\)"?
 # function definitions
 
 def main(args):
-	# process parameters
 	if len(args) < 2:
 		usage()
 		return

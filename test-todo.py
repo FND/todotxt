@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+# To Do:
+# * explore doctest:
+#	http://docs.python.org/lib/module-doctest.html
+#	http://docs.python.org/lib/doctest-simple-testfile.html
+
 import unittest
 import todo
 
