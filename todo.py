@@ -24,10 +24,11 @@ import re
 
 # settings -- DEBUG: to be read from file (optional)
 
+# DEBUG: use items class
 baseDir = "/tmp/todo/" # DEBUG: for testing purposes only
 itemsFile = baseDir + "tasks.txt"
-reportFile = baseDir + "report.txt"
 archiveFile = baseDir + "archive.txt"
+reportFile = baseDir + "report.txt"
 
 useUTC = False
 
@@ -113,7 +114,7 @@ def dispatch(command, params):
 	else:
 		usage()
 
-# command handlers -- DEBUG: move to separate class?
+# command handlers
 
 class commands:
 	def add(self, params):
@@ -223,201 +224,206 @@ class commands:
 			pattern = ["\([A-Z]\)"]
 		listItems(pattern)
 
-# item functions -- DEBUG: move into separate class?
+# item functions
 
-def addItem(text, filename):
-	"""
-	add new item
+class items:
+	active = itemsFile
+	archive = archiveFile
+	report = reportFile
 
-	@param text: item text
-	@type  text: str
-	@param filename: full path to target file
-	@type  filename: str
-	@return: None
-	"""
-	f = open(itemsFile, "a")
-	f.write(text + os.linesep)
-	f.close()
-	# DEBUG: return/report ID of new item
+	def get(self, filename):
+		"""
+		retrieve items from file
 
-def modifyItem(action, id, text = ""): # DEBUG: split into three separate functions?
-	"""
-	modify existing item
+		@param filename: full path to source file
+		@type  filename: str
+		@return: items with IDs
+		@rtype : dict
+		"""
+		i = 0
+		items = {}
+		for line in open(filename).readlines():
+			if line.strip() != "": #and not line.strip().startswith(ignorePrefix): # DEBUG'd
+				i += 1
+				items[i] = line.strip()
+		return items
 
-	@param action: append, replace, remove, or flag
-	@type  action: str
-	@param id: item ID
-	@type  id: int
-	@param text: item text to use for appending/replacing
-	@type  text: str
-	@return: None
-	"""
-	items = getItems(itemsFile)
-	if(itemExists(items, id, True)):
-		# appending
-		if action == "append": # DEBUG: proper replacement for switch()...case?
-			items[id] = items[id] + text
-		# replacing
-		elif action == "replace":
-			items[id] = text
-		# removing
-		elif action == "remove":
-			items.pop(id)
-		# flagging
-		elif action == "flag": # DEBUG: rename?
-			if useUTC:
-				date = time.strftime("%Y-%m-%d", time.gmtime())
-			else:
-				date = time.strftime("%Y-%m-%d", time.localtime())
-			items[id] = " ".join(["x", date, items[id]])
-			print "#%d marked as done (%s)" % (id, date)
-		writeItems(items)
-		return True
-	else:
-		return False
+	def write(self, items, filename):
+		"""
+		write items to file
 
-def prioritize(id, priority):
-	"""
-	set or remove item priority
+		@param items: items with IDs
+		@type  items: dict
+		@param filename: full path to target file
+		@type  filename: str
+		@return: None
+		"""
+		keys = items.keys()
+		keys.sort()
+		f = open(filename, "w")
+		for key in keys:
+			f.write(items[key] + os.linesep) # DEBUG: inefficient?
+		f.close()
 
-	@param id: item ID
-	@type  id: int
-	@param priority: item priority (none if empty string)
-	@type  priority: str
-	@return: None
-	"""
-	items = getItems(itemsFile)
-	if(itemExists(items, id, True)):
-		priority = priority.upper()
-		if priority != "" and not re.match("[A-Z]", priority):
-			print "Priority not recognized: " + priority
-			return False
-		if priority == "":
-			# remove existing priority
-			items[id] = re.sub(priorityRE, "", items[id])
-		elif re.match(priorityRE, items[id]):
-			# change existing priority
-			items[id] = re.sub(priorityRE, "(" + priority + ") ", items[id])
+	def add(self, text, filename):
+		"""
+		add new item
+
+		@param text: item text
+		@type  text: str
+		@param filename: full path to target file
+		@type  filename: str
+		@return: None
+		"""
+		f = open(self.active, "a")
+		f.write(text + os.linesep)
+		f.close()
+		# DEBUG: return/report ID of new item
+
+	def modify(self, action, id, text = ""): # DEBUG: split into three separate functions?
+		"""
+		modify existing item
+
+		@param action: append, replace, remove, or flag
+		@type  action: str
+		@param id: item ID
+		@type  id: int
+		@param text: item text to use for appending/replacing
+		@type  text: str
+		@return: None
+		"""
+		items = getItems(self.active)
+		if(itemExists(items, id, True)):
+			# appending
+			if action == "append": # DEBUG: proper replacement for switch()...case?
+				items[id] = items[id] + text
+			# replacing
+			elif action == "replace":
+				items[id] = text
+			# removing
+			elif action == "remove":
+				items.pop(id)
+			# flagging
+			elif action == "flag": # DEBUG: rename?
+				if useUTC:
+					date = time.strftime("%Y-%m-%d", time.gmtime())
+				else:
+					date = time.strftime("%Y-%m-%d", time.localtime())
+				items[id] = " ".join(["x", date, items[id]])
+				print "#%d marked as done (%s)" % (id, date)
+			writeItems(items)
+			return True
 		else:
-			# set priority
-			items[id] = "(" + priority + ") " + items[id]
-		writeItems(items, itemsFile)
-		return True
-	else:
-		return False
+			return False
 
-def archiveItems():
-	"""
-	move flagged items to archive
+	def prioritize(self, id, priority):
+		"""
+		set or remove item priority
 
-	@return: None
-	"""
-	items = getItems(itemsFile)
-	activeItems = items.copy() # DEBUG: duplication necessary?
-	archivedItems = getItems(archiveFile)
-	# move flagged items to archive
-	for k, v in items.iteritems():
-		if v.startswith("x "):
-			archivedItems[len(archivedItems)] = activeItems.pop(k)
-	writeItems(archivedItems, archiveFile)
-	writeItems(activeItems, itemsFile)
+		@param id: item ID
+		@type  id: int
+		@param priority: item priority (none if empty string)
+		@type  priority: str
+		@return: None
+		"""
+		items = getItems(self.active)
+		if(itemExists(items, id, True)):
+			priority = priority.upper()
+			if priority != "" and not re.match("[A-Z]", priority):
+				print "Priority not recognized: " + priority
+				return False
+			if priority == "":
+				# remove existing priority
+				items[id] = re.sub(priorityRE, "", items[id])
+			elif re.match(priorityRE, items[id]):
+				# change existing priority
+				items[id] = re.sub(priorityRE, "(" + priority + ") ", items[id])
+			else:
+				# set priority
+				items[id] = "(" + priority + ") " + items[id]
+			writeItems(items, self.active)
+			return True
+		else:
+			return False
 
-def listItems(patterns = None):
-	"""
-	display items
+	def archive(self):
+		"""
+		move flagged items to archive
 
-	@param patterns: filtering pattern(s) (RegEx)
-	@type  patterns: list
-	@return: None
-	"""
-	items = getItems(itemsFile)
-	# apply filtering
-	selection = []
-	if patterns:
+		@return: None
+		"""
+		items = getItems(self.active)
+		activeItems = items.copy() # DEBUG: duplication necessary?
+		archivedItems = getItems(self.archive)
+		# move flagged items to archive
 		for k, v in items.iteritems():
-			for pattern in patterns:
-				if re.search(pattern, v, re.IGNORECASE):
-					selection.append("%3d: %s" % (k, v))
-	else:
-		for k, v in items.iteritems():
-			selection.append("%3d: %s" % (k, v))
-	#selection.sort() # sort by todo.txt order -- DEBUG'd
-	selection.sort(alphaSort) # sort by tasks alphbetically
-	# highlight priority items
-	for item in selection:
-		print priorityRE.sub(highlightPriorities, item) # DEBUG: ?
+			if v.startswith("x "):
+				archivedItems[len(archivedItems)] = activeItems.pop(k)
+		writeItems(activeItems, self.active)
+		writeItems(archivedItems, self.archive)
 
-def report(): # DEBUG: integrate birdseye.py?
-	"""
-	generate overview of active and archived items
+	def list(self, patterns = None):
+		"""
+		display items
 
-	@return: None
-	"""
-	archiveItems()
-	activeItems = getItems(tasksFile)
-	archivedItems = getItems(archiveFile)
-	date = time.strftime("%Y-%m-%d-%T", time.localtime())
-	f = open(reportFile, "a")
-	string = "%s %d %d" % (date, len(activeItems), len(archivedItems))
-	f.write(string + os.linesep)
-	f.close()
+		@param patterns: filtering pattern(s) (RegEx)
+		@type  patterns: list
+		@return: None
+		"""
+		items = getItems(self.active)
+		# apply filtering
+		selection = []
+		if patterns:
+			for k, v in items.iteritems():
+				for pattern in patterns:
+					if re.search(pattern, v, re.IGNORECASE):
+						selection.append("%3d: %s" % (k, v))
+		else:
+			for k, v in items.iteritems():
+				selection.append("%3d: %s" % (k, v))
+		#selection.sort() # sort by todo.txt order -- DEBUG'd
+		selection.sort(alphaSort) # sort by tasks alphbetically
+		# highlight priority items
+		for item in selection:
+			print priorityRE.sub(highlightPriorities, item) # DEBUG: ?
 
-def removeDuplicates(items):
-	pass # DEBUG: to do
+	def report(self): # DEBUG: integrate birdseye.py?
+		"""
+		generate overview of active and archived items
 
-def itemExists(items, id, displayMessage = False):
-	"""
-	checks whether a specific item ID exists
+		@return: None
+		"""
+		archiveItems()
+		activeItems = getItems(self.active)
+		archivedItems = getItems(self.archive)
+		date = time.strftime("%Y-%m-%d-%T", time.localtime())
+		f = open(self.report, "a")
+		string = "%s %d %d" % (date, len(activeItems), len(archivedItems))
+		f.write(string + os.linesep)
+		f.close()
 
-	@param items: items with IDs
-	@type  items: dict
-	@param id: item ID
-	@type  id: int
-	@param displayMessage: display notification on error
-	@type  displayMessage: bool
-	@return: item exists
-	@rtype : bool
-	"""
-	if items.has_key(id):
-		return True
-	else:
-		if(displayMessage):
-			print "#%d: No such item." % id
-		return False
+	def removeDuplicates(self, items):
+		pass # DEBUG: to do
 
-def getItems(filename):
-	"""
-	retrieve items from file
+	def exists(self, items, id, displayMessage = False):
+		"""
+		checks whether a specific item ID exists
 
-	@param filename: full path to source file
-	@type  filename: str
-	@return: items with IDs
-	@rtype : dict
-	"""
-	i = 0
-	items = {}
-	for line in open(filename).readlines():
-		if line.strip() != "": #and not line.strip().startswith(ignorePrefix): # DEBUG'd
-			i += 1
-			items[i] = line.strip()
-	return items
-
-def writeItems(items, filename):
-	"""
-	write items to file
-
-	@param items: items with IDs
-	@type  items: dict
-	@param filename: full path to target file
-	@type  filename: str
-	@return: None
-	"""
-	keys = items.keys()
-	keys.sort()
-	f = open(filename, "w")
-	for key in keys:
-		f.write(items[key] + os.linesep) # DEBUG: inefficient?
-	f.close()
+		@param items: items with IDs
+		@type  items: dict
+		@param id: item ID
+		@type  id: int
+		@param displayMessage: display notification on error
+		@type  displayMessage: bool
+		@return: item exists
+		@rtype : bool
+		"""
+		if items.has_key(id):
+			return True
+		else:
+			if(displayMessage):
+				print "#%d: No such item." % id
+			return False
 
 # utility functions
 
