@@ -1,0 +1,9 @@
+[aaa]
+foo: lorem
+bar: ipsum
+baz: dolor
+
+[bbb]
+foo = lorem
+bar = ipsum
+baz = dolor

@@ -13,71 +13,44 @@ Based on concept by Gina Trapani (http://todotxt.com) and original Python port b
 # * read settings from file
 # * implement date threshold for tasks (items appearing in list only after a certain date)
 # * error handling for file I/O
+# * switch for custom config file
 # * Epydoc: default values for optional function arguments
 # * i18n: move strings to separate object
 # * use YAML?
+# * documentation (switches/options, commands)
 
 import sys
 import os
 import time
 import re
+from ConfigParser import SafeConfigParser
 
-# settings -- DEBUG: to be read from file (optional)
-
-# DEBUG: use items class
-baseDir = "/tmp/todo/" # DEBUG: for testing purposes only
-itemsFile = baseDir + "tasks.txt"
-archiveFile = baseDir + "archive.txt"
-reportFile = baseDir + "report.txt"
-
-useUTC = False
-
-colors = {
-	"default": "\033[0m",
-	"white": "\033[1;37m",
-	"black": "\033[0;30m",
-	"red": "\033[0;31m",
-	"green": "\033[0;32m",
-	"blue": "\033[0;34m",
-	"yellow": "\033[1;33m",
-	"purple": "\033[0;35m",
-	"cyan": "\033[0;36m",
-	"brown": "\033[0;33m",
-	"light gray": "\033[0;37m",
-	"dark gray": "\033[1;30m",
-	"light red": "\033[1;31m",
-	"light green": "\033[1;32m",
-	"light blue": "\033[1;34m",
-	"light purple": "\033[1;35m",
-	"light cyan": "\033[1;36m"
-}
-
-priorityColors = {
-	"A": colors["light red"],
-	"B": colors["yellow"],
-	"C": colors["light blue"],
-	"X": colors["white"]
-}
-
-#priorityRE = re.compile(r"\([A-Z]\) ") # DEBUG'd
-priorityRE = re.compile(r".*(\([A-Z]\)).*") # DEBUG: use r"^\([A-Z]\)"?
-
-# function definitions
+# initialization
 
 def main(args):
 	if len(args) < 2:
 		usage()
 		return
 	else:
-		# disable colors if required ("-p" switch or Windows)
-		if args[1] == "-p":
-			disableColors()
-			args.pop(1)
-		elif sys.platform == "win32" or os.name in ["nt", "ce"]: # DEBUG: improve conditions
-			disableColors()
-		command = args[1]
+		cfg = config()
+		# process command-line options
+		for i in range(2):
+			if args[1] == "-p":
+				cfg.colorsDisabled = True
+				args.pop(1)
+			if args[1] == "-c":
+				cfgDir = args.pop(2)
+				args.pop(1)
+		# process configuration
+		cfg.read(cfgDir)
+		if cfg.colorsDisabled == True:
+			equalizeDict(cfg.colors)
+			equalizeDict(cfg.highlightColors)
+		itm = items(cfg.file_active, cfg.file_archive, cfg.file_report)
+		# process commands
+		cmd = args[1]
 		params = args[2:]
-	dispatch(command, params)
+		dispatch(cmd, params)
 
 def dispatch(command, params):
 	"""
@@ -108,7 +81,7 @@ def dispatch(command, params):
 	cmds["p"] = cmds["pri"]
 	cmds["ls"] = cmds["list"]
 	cmds["lsp"] = cmds["listpri"]
-	# execute command
+	# execute
 	if command in cmds:
 		cmds[command]()
 	else:
@@ -126,7 +99,7 @@ class commands:
 		@return None
 		"""
 		if params:
-			addItem(" ".join(params), itemsFile)
+			addItem(" ".join(params), itm.active)
 		else:
 			print "Usage: " + sys.argv[0] + " add <text> [+<project>] [@<context>]" # DEBUG: duplication; cf. usage() (also see below)
 
@@ -227,9 +200,21 @@ class commands:
 # item functions
 
 class items:
-	active = itemsFile
-	archive = archiveFile
-	report = reportFile
+	def __init__(self, active, archive, report):
+		"""
+		initialize item files
+
+		@param active: active items' filepath
+		@type  active: str
+		@param archive: archived items' filepath
+		@type  archive: str
+		@param report: report's filepath
+		@type  report: str
+		@return: None
+		"""
+		self.active = active
+		self.archive = archive
+		self.report = report
 
 	def get(self, filename):
 		"""
@@ -289,7 +274,7 @@ class items:
 		@param id: item ID
 		@type  id: int
 		@param text: item text to use for appending/replacing
-		@type  text: str
+		@type  text: [optional] str
 		@return: None
 		"""
 		items = getItems(self.active)
@@ -367,7 +352,7 @@ class items:
 		display items
 
 		@param patterns: filtering pattern(s) (RegEx)
-		@type  patterns: list
+		@type  patterns: [optional] list
 		@return: None
 		"""
 		items = getItems(self.active)
@@ -414,7 +399,7 @@ class items:
 		@param id: item ID
 		@type  id: int
 		@param displayMessage: display notification on error
-		@type  displayMessage: bool
+		@type  displayMessage: [optional] bool
 		@return: item exists
 		@rtype : bool
 		"""
@@ -427,16 +412,7 @@ class items:
 
 # utility functions
 
-def disableColors():
-	"""
-	disable color output
-
-	@return None
-	"""
-	for k in priorityColors:
-		priorityColors[k] = ""
-
-def highlightPriorities(match):
+def highlightPriorityItems(match):
 	"""
 	highlight priority items
 
@@ -447,13 +423,13 @@ def highlightPriorities(match):
 	"""
 	print info(match)
 	if match.group(1) == "(A)":
-		return priorityColors["A"] + match.group(0) + colors["default"]
+		return highlightColors["A"] + match.group(0) + colors["default"]
 	elif match.group(1) == "(B)":
-		return priorityColors["B"] + match.group(0) + colors["default"]
+		return highlightColors["B"] + match.group(0) + colors["default"]
 	elif match.group(1) == "(C)":
-		return priorityColors["C"] + match.group(0) + colors["default"]
+		return highlightColors["C"] + match.group(0) + colors["default"]
 	else:
-		return priorityColors["X"] + match.group(0) + colors["default"]
+		return highlightColors["all"] + match.group(0) + colors["default"]
 
 def alphaSort(a, b):
 	"""
@@ -473,6 +449,20 @@ def alphaSort(a, b):
 	else:
 		return 0
 
+# DEBUG: to be used for disabling colors -- continue here
+def equalizeDict(dic, value = ""):
+	"""
+	equalize all values in a dictionary
+
+	@param dic: dictionary
+	@type  dic: dict
+	@param value: value
+	@type  value: [optional] mixed
+	@return: None
+	"""
+	for key in dic:
+		dic[key] = value
+
 def info(var): # DEBUG: for debugging only
 	"""
 	display variable information
@@ -483,8 +473,6 @@ def info(var): # DEBUG: for debugging only
 	@rtype : str
 	"""
 	return '%s = %r %s' % (var, var, type(var))
-
-
 
 # instructions (help)
 
@@ -546,8 +534,86 @@ def usage():
 """
 	print text
 
-# processing instructions -- DEBUG: ?
+# configuration -- DEBUG: make proper use of ConfigParser defaults
 
-if __name__ == "__main__": # skip main() when module was imported
+class config:
+	def __init__(self, filename = ".todotxt"):
+		"""
+		default configuration
+
+		@param filename: configuration file
+		@type  filename: [optional] str
+		@return: None
+		"""
+		self.file = filename
+		#self.priorityRE = re.compile(r"\([A-Z]\) ") # DEBUG'd
+		self.priorityRE = re.compile(r".*(\([A-Z]\)).*") # DEBUG: use r"^\([A-Z]\)"?
+		self.defaults = {
+			# preferences
+			"baseDir": "~/todotxt/", # DEBUG: "~" not supported!?
+			"file_active": "tasks.txt",
+			"file_archive": "archive.txt",
+			"file_report": "report.txt",
+			"useUTC": False,
+			# colors
+			"default": "\033[0m",
+			"white": "\033[1;37m",
+			"black": "\033[0;30m",
+			"red": "\033[0;31m",
+			"green": "\033[0;32m",
+			"blue": "\033[0;34m",
+			"yellow": "\033[1;33m",
+			"purple": "\033[0;35m",
+			"cyan": "\033[0;36m",
+			"brown": "\033[0;33m",
+			"light gray": "\033[0;37m",
+			"dark gray": "\033[1;30m",
+			"light red": "\033[1;31m",
+			"light green": "\033[1;32m",
+			"light blue": "\033[1;34m",
+			"light purple": "\033[1;35m",
+			"light cyan": "\033[1;36m",
+			# highlight colors
+			"A": colors["light red"],
+			"B": colors["yellow"],
+			"C": colors["light blue"],
+			"all": colors["white"]
+		}
+		self.baseDir = os.getcwd() + os.sep # DEBUG: for testing purposes only
+		if sys.platform == "win32" or os.name in ["nt", "ce"]: # non-POSIX-compliant platforms -- DEBUG: improve conditions
+			self.baseDir = os.getcwd() + os.sep
+			self.colorsDisabled = True
+
+	def read(self):
+		"""
+		read configuration file
+
+		@return: None
+		"""
+		cfg = SafeConfigParser(self.defaults)
+		cfg.read(self.file)
+		# preferences
+		section = "preferences"
+		self.baseDir = cfg.get(section, "baseDir")
+		self.file_active = cfg.get(section, "file_active")
+		self.file_archive = cfg.get(section, "file_archive")
+		self.file_report = cfg.get(section, "file_report")
+		self.useUTC = cfg.get(section, "useUTC")
+		# highlight colors
+		section = "priorities"
+		for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+			self.highlightColors = self.colors[cfg.get(section, c)]
+
+	def write(self):
+		"""
+		write configuration file
+
+		@return: None
+		"""
+		pass # DEBUG: to do
+
+# startup
+
+if __name__ == "__main__": # skip main() if module was imported
 	sys.exit(main(sys.argv))
 
