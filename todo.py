@@ -37,18 +37,23 @@ def main(args):
 		usage()
 		return
 	else:
-		cfg = config()
+		if POSIX():
+			cfgFile = os.getcwd() + os.sep
+		else:
+			cfgFile = "~/.todotxt" # DEBUG: "~" not supported?
 		# process command-line options
 		for i in range(2):
 			if args[1] == "-p":
-				cfg.colorsDisabled = True
+				plainMode = True
 				args.pop(1)
 			if args[1] == "-c":
-				cfgDir = args.pop(2)
+				cfgFile = args.pop(2)
 				args.pop(1)
 		# process configuration
-		cfg.read(cfgDir)
-		if cfg.colorsDisabled == True:
+		cfg = config()
+		cfg.read(cfgFile)
+		if plainMode or not POSIX():
+			# disable colors
 			purgeDict(cfg.colors)
 			purgeDict(cfg.highlightColors)
 		itm = items(cfg.file_active, cfg.file_archive, cfg.file_report)
@@ -104,6 +109,8 @@ def highlightPriorityItems(match):
 	@rtype : [DEBUG: unclear]
 	"""
 	global cfg
+	print match # DEBUG
+	dir(match) # DEBUG
 	if match.group(1) == "(A)":
 		return cfg.highlightColors["A"] + match.group(0) + cfg.colors["default"]
 	elif match.group(1) == "(B)":
@@ -143,6 +150,18 @@ def purgeDict(dic, value = ""):
 	"""
 	for key in dic:
 		dic[key] = value
+
+def POSIX():
+	"""
+	check whether current platform's is POSIX-compliant
+
+	@return: POSIX-compliance
+	@rtype : bool
+	"""
+	if sys.platform == "win32" or os.name in ["nt", "ce"]: # DEBUG: improve conditions
+		return False
+	else:
+		return True
 
 def info(var): # DEBUG: for debugging only
 	"""
@@ -541,15 +560,12 @@ class items:
 			return False
 
 class config:
-	def __init__(self, filename = ".todotxt"):
+	def __init__(self):
 		"""
 		default configuration
 
-		@param filename: configuration file
-		@type  filename: [optional] str
 		@return: None
 		"""
-		self.file = filename
 		#self.priorityRE = re.compile(r"\([A-Z]\) ") # DEBUG'd
 		self.priorityRE = re.compile(r".*(\([A-Z]\)).*") # DEBUG: use r"^\([A-Z]\)"?
 		self.defaults = {
@@ -584,18 +600,19 @@ class config:
 		self.defaults["C"] = self.defaults["light blue"]
 		self.defaults["all"] = self.defaults["white"]
 		# platform-specific settings
-		if sys.platform == "win32" or os.name in ["nt", "ce"]: # non-POSIX-compliant platforms -- DEBUG: improve conditions
+		if not POSIX():
 			defaults["baseDir"] = os.getcwd() + os.sep
-			defaults["colorsDisabled"] = True
 
-	def read(self):
+	def read(self, filepath):
 		"""
 		read configuration file
 
+		@param filepath: configuration file
+		@type  filepath: str
 		@return: None
 		"""
 		cfg = SafeConfigParser(self.defaults)
-		cfg.read(self.file)
+		cfg.read(filepath)
 		# preferences
 		section = "preferences"
 		self.baseDir = cfg.get(section, "baseDir")
