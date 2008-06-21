@@ -329,10 +329,11 @@ class commands:
 		@type  params: list
 		@return None
 		"""
+		global itm
 		if len(params) > 0:
-			listItems(params)
+			itm.list(params)
 		else:
-			listItems()
+			itm.list()
 
 	def listPriorities(self, params):
 		"""
@@ -428,7 +429,7 @@ class items:
 		@type  text: [optional] str
 		@return: None
 		"""
-		items = getItems(self.active)
+		items = self.get(self.active)
 		if(itemExists(items, id, True)):
 			# appending
 			if action == "append": # DEBUG: proper replacement for switch()...case?
@@ -447,7 +448,7 @@ class items:
 					date = time.strftime("%Y-%m-%d", time.localtime())
 				items[id] = " ".join(["x", date, items[id]])
 				print "#%d marked as done (%s)" % (id, date)
-			writeItems(items)
+			self.write(items)
 			return True
 		else:
 			return False
@@ -462,7 +463,7 @@ class items:
 		@type  priority: str
 		@return: None
 		"""
-		items = getItems(self.active)
+		items = self.get(self.active)
 		if(itemExists(items, id, True)):
 			priority = priority.upper()
 			if priority != "" and not re.match("[A-Z]", priority):
@@ -477,7 +478,7 @@ class items:
 			else:
 				# set priority
 				items[id] = "(" + priority + ") " + items[id]
-			writeItems(items, self.active)
+			self.write(items, self.active)
 			return True
 		else:
 			return False
@@ -488,15 +489,15 @@ class items:
 
 		@return: None
 		"""
-		items = getItems(self.active)
+		items = self.get(self.active)
 		activeItems = items.copy() # DEBUG: duplication necessary?
-		archivedItems = getItems(self.archive)
+		archivedItems = self.get(self.archive)
 		# move flagged items to archive
 		for k, v in items.iteritems():
 			if v.startswith("x "):
 				archivedItems[len(archivedItems)] = activeItems.pop(k)
-		writeItems(activeItems, self.active)
-		writeItems(archivedItems, self.archive)
+		self.write(activeItems, self.active)
+		self.write(archivedItems, self.archive)
 
 	def list(self, patterns = None):
 		"""
@@ -506,7 +507,8 @@ class items:
 		@type  patterns: [optional] list
 		@return: None
 		"""
-		items = getItems(self.active)
+		global itm
+		items = self.get(self.active)
 		# apply filtering
 		selection = []
 		if patterns:
@@ -530,8 +532,8 @@ class items:
 		@return: None
 		"""
 		archiveItems()
-		activeItems = getItems(self.active)
-		archivedItems = getItems(self.archive)
+		activeItems = self.get(self.active)
+		archivedItems = self.get(self.archive)
 		date = time.strftime("%Y-%m-%d-%T", time.localtime())
 		f = open(self.report, "a")
 		string = "%s %d %d" % (date, len(activeItems), len(archivedItems))
