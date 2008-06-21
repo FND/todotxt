@@ -1,6 +1,6 @@
 [preferences]
-baseDir: ~/todotxt/
-file_active: tasks.txt
+baseDir: ~/Dev/todotxt/
+file_active: .todotxt
 file_archive: archive.txt
 file_report: report.txt
 useUTC: False
