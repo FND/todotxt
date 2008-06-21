@@ -27,7 +27,12 @@ from ConfigParser import SafeConfigParser
 
 # initialization
 
+cfg = None
+itm = None
+
 def main(args):
+	global cfg
+	global itm
 	if len(args) < 2:
 		usage()
 		return
@@ -44,8 +49,8 @@ def main(args):
 		# process configuration
 		cfg.read(cfgDir)
 		if cfg.colorsDisabled == True:
-			equalizeDict(cfg.colors)
-			equalizeDict(cfg.highlightColors)
+			purgeDict(cfg.colors)
+			purgeDict(cfg.highlightColors)
 		itm = items(cfg.file_active, cfg.file_archive, cfg.file_report)
 		# process commands
 		cmd = args[1]
@@ -449,8 +454,7 @@ def alphaSort(a, b):
 	else:
 		return 0
 
-# DEBUG: to be used for disabling colors -- continue here
-def equalizeDict(dic, value = ""):
+def purgeDict(dic, value = ""):
 	"""
 	equalize all values in a dictionary
 
@@ -579,10 +583,10 @@ class config:
 			"C": colors["light blue"],
 			"all": colors["white"]
 		}
-		self.baseDir = os.getcwd() + os.sep # DEBUG: for testing purposes only
+		defaults["baseDir"] = os.getcwd() + os.sep # DEBUG: for testing purposes only
 		if sys.platform == "win32" or os.name in ["nt", "ce"]: # non-POSIX-compliant platforms -- DEBUG: improve conditions
-			self.baseDir = os.getcwd() + os.sep
-			self.colorsDisabled = True
+			defaults["baseDir"] = os.getcwd() + os.sep
+			defaults["colorsDisabled"] = True
 
 	def read(self):
 		"""
