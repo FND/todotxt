@@ -20,6 +20,7 @@ Based on concept by Gina Trapani (http://todotxt.com) and original Python port b
 # * documentation (switches/options, commands)
 # * refactor configuration handling
 
+from __future__ import with_statement
 import sys
 import os
 import time
@@ -58,7 +59,9 @@ def main(args):
 			# disable colors
 			purgeDict(cfg.colors)
 			purgeDict(cfg.highlightColors)
-		itm = items(cfg.file_active, cfg.file_archive, cfg.file_report)
+		itm = items(cfg.baseDir + cfg.file_active,
+			cfg.baseDir + cfg.file_archive,
+			cfg.baseDir + cfg.file_report)
 		# process commands
 		cmd = args[1]
 		params = args[2:]
@@ -377,12 +380,16 @@ class items:
 		@return: items with IDs
 		@rtype : dict
 		"""
-		i = 0
 		items = {}
-		for line in open(filepath).readlines():
-			if line.strip() != "": #and not line.strip().startswith(ignorePrefix): # DEBUG: not yet implemented
-				i += 1
-				items[i] = line.strip()
+		try:
+			with open(filepath, "r") as f:
+				i = 0
+				for line in f:
+					if line.strip() != "": #and not line.strip().startswith(ignorePrefix): # DEBUG: not yet implemented
+						i += 1
+						items[i] = line.strip()
+		except:
+			print "error accessing file: " + filepath
 		return items
 
 	def write(self, items, filepath):
@@ -397,10 +404,9 @@ class items:
 		"""
 		keys = items.keys()
 		keys.sort()
-		f = open(filepath, "w")
-		for key in keys:
-			f.write(items[key] + os.linesep) # DEBUG: inefficient?
-		f.close()
+		with open(filepath, "w") as f:
+			for key in keys:
+				f.write(items[key] + os.linesep) # DEBUG: inefficient?
 
 	def add(self, text, filepath):
 		"""
@@ -412,9 +418,8 @@ class items:
 		@type  filepath: str
 		@return: None
 		"""
-		f = open(self.active, "a")
-		f.write(text + os.linesep)
-		f.close()
+		with open(self.active, "a") as f:
+			f.write(text + os.linesep)
 		# DEBUG: return/report ID of new item
 
 	def modify(self, action, id, text = ""): # DEBUG: split into three separate functions?
@@ -535,10 +540,9 @@ class items:
 		activeItems = self.get(self.active)
 		archivedItems = self.get(self.archive)
 		date = time.strftime("%Y-%m-%d-%T", time.localtime())
-		f = open(self.report, "a")
-		string = "%s %d %d" % (date, len(activeItems), len(archivedItems))
-		f.write(string + os.linesep)
-		f.close()
+		with open(self.report, "a") as f:
+			string = "%s %d %d" % (date, len(activeItems), len(archivedItems))
+			f.write(string + os.linesep)
 
 	def removeDuplicates(self, items):
 		pass # DEBUG: to do
