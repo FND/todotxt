@@ -576,14 +576,14 @@ class config:
 			"light green": "\033[1;32m",
 			"light blue": "\033[1;34m",
 			"light purple": "\033[1;35m",
-			"light cyan": "\033[1;36m",
-			# highlight colors
-			"A": colors["light red"],
-			"B": colors["yellow"],
-			"C": colors["light blue"],
-			"all": colors["white"]
+			"light cyan": "\033[1;36m"
 		}
-		defaults["baseDir"] = os.getcwd() + os.sep # DEBUG: for testing purposes only
+		# highlight colors
+		self.defaults["A"] = self.defaults["light red"]
+		self.defaults["B"] = self.defaults["yellow"]
+		self.defaults["C"] = self.defaults["light blue"]
+		self.defaults["all"] = self.defaults["white"]
+		# platform-specific settings
 		if sys.platform == "win32" or os.name in ["nt", "ce"]: # non-POSIX-compliant platforms -- DEBUG: improve conditions
 			defaults["baseDir"] = os.getcwd() + os.sep
 			defaults["colorsDisabled"] = True
