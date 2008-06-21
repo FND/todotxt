@@ -1,9 +1,31 @@
-[aaa]
-foo: lorem
-bar: ipsum
-baz: dolor
+[preferences]
+baseDir: ~/todotxt/
+file_active: tasks.txt
+file_archive: archive.txt
+file_report: report.txt
+useUTC: False
 
-[bbb]
-foo = lorem
-bar = ipsum
-baz = dolor
+[highlights]
+A: light red
+B: yellow
+C: light blue
+all: white
+
+[colors]
+default: \033[0m
+white: \033[1;37m
+black: \033[0;30m
+red: \033[0;31m
+green: \033[0;32m
+blue: \033[0;34m
+yellow: \033[1;33m
+purple: \033[0;35m
+cyan: \033[0;36m
+brown: \033[0;33m
+light gray: \033[0;37m
+dark gray: \033[1;30m
+light red: \033[1;31m
+light green: \033[1;32m
+light blue: \033[1;34m
+light purple: \033[1;35m
+light cyan: \033[1;36m
