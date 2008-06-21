@@ -76,6 +76,7 @@ def dispatch(command, params):
 	@param params: parameters
 	@type  params: list
 	"""
+	global itm
 	cmd = commands()
 	cmds = { # N.B.: lambdas required due to varying number of function arguments
 		"add": lambda: cmd.add(params),
@@ -87,8 +88,8 @@ def dispatch(command, params):
 		"rmdup": lambda: cmd.removeDuplicates(),
 		"list": lambda: cmd.list(params),
 		"listpri": lambda: cmd.listPriorities(params),
-		"archive": lambda: archive(),
-		"report": lambda: report(),
+		"archive": lambda: itm.archive(),
+		"report": lambda: itm.generateReport(),
 		"help": lambda: usage()
 	} # DEBUG: can be reused for documentation!?
 	# aliases
@@ -253,7 +254,7 @@ class commands:
 		@return None
 		"""
 		if params:
-			addItem(" ".join(params), itm.active)
+			addItem(" ".join(params), itm.file_active)
 		else:
 			print "Usage: " + sys.argv[0] + " add <text> [+<project>] [@<context>]" # DEBUG: duplication; cf. usage() (also see below)
 
@@ -367,9 +368,9 @@ class items:
 		@type  report: str
 		@return: None
 		"""
-		self.active = active
-		self.archive = archive
-		self.report = report
+		self.file_active = active
+		self.file_archive = archive
+		self.file_report = report
 
 	def get(self, filepath):
 		"""
@@ -418,7 +419,7 @@ class items:
 		@type  filepath: str
 		@return: None
 		"""
-		with open(self.active, "a") as f:
+		with open(self.file_active, "a") as f:
 			f.write(text + os.linesep)
 		# DEBUG: return/report ID of new item
 
@@ -434,7 +435,7 @@ class items:
 		@type  text: [optional] str
 		@return: None
 		"""
-		items = self.get(self.active)
+		items = self.get(self.file_active)
 		if(itemExists(items, id, True)):
 			# appending
 			if action == "append": # DEBUG: proper replacement for switch()...case?
@@ -468,7 +469,7 @@ class items:
 		@type  priority: str
 		@return: None
 		"""
-		items = self.get(self.active)
+		items = self.get(self.file_active)
 		if(itemExists(items, id, True)):
 			priority = priority.upper()
 			if priority != "" and not re.match("[A-Z]", priority):
@@ -483,7 +484,7 @@ class items:
 			else:
 				# set priority
 				items[id] = "(" + priority + ") " + items[id]
-			self.write(items, self.active)
+			self.write(items, self.file_active)
 			return True
 		else:
 			return False
@@ -494,15 +495,15 @@ class items:
 
 		@return: None
 		"""
-		items = self.get(self.active)
+		items = self.get(self.file_active)
 		activeItems = items.copy() # DEBUG: duplication necessary?
-		archivedItems = self.get(self.archive)
+		archivedItems = self.get(self.file_archive)
 		# move flagged items to archive
 		for k, v in items.iteritems():
 			if v.startswith("x "):
 				archivedItems[len(archivedItems)] = activeItems.pop(k)
-		self.write(activeItems, self.active)
-		self.write(archivedItems, self.archive)
+		self.write(activeItems, self.file_active)
+		self.write(archivedItems, self.file_archive)
 
 	def list(self, patterns = None):
 		"""
@@ -513,7 +514,7 @@ class items:
 		@return: None
 		"""
 		global itm
-		items = self.get(self.active)
+		items = self.get(self.file_active)
 		# apply filtering
 		selection = []
 		if patterns:
@@ -530,17 +531,17 @@ class items:
 		for item in selection:
 			print priorityRE.sub(highlightPriorities, item) # DEBUG: ?
 
-	def report(self): # DEBUG: integrate birdseye.py?
+	def generateReport(self): # DEBUG: integrate birdseye.py?
 		"""
 		generate overview of active and archived items
 
 		@return: None
 		"""
-		archiveItems()
-		activeItems = self.get(self.active)
-		archivedItems = self.get(self.archive)
+		self.archive()
+		activeItems = self.get(self.file_active)
+		archivedItems = self.get(self.file_archive)
 		date = time.strftime("%Y-%m-%d-%T", time.localtime())
-		with open(self.report, "a") as f:
+		with open(self.file_report, "a") as f:
 			string = "%s %d %d" % (date, len(activeItems), len(archivedItems))
 			f.write(string + os.linesep)
 
