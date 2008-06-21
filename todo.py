@@ -356,11 +356,11 @@ class items:
 		"""
 		initialize item files
 
-		@param active: active items' filepath
+		@param active: source file for active items
 		@type  active: str
-		@param archive: archived items' filepath
+		@param archive: source file for archived items
 		@type  archive: str
-		@param report: report's filepath
+		@param report: source file for report
 		@type  report: str
 		@return: None
 		"""
@@ -368,48 +368,48 @@ class items:
 		self.archive = archive
 		self.report = report
 
-	def get(self, filename):
+	def get(self, filepath):
 		"""
 		retrieve items from file
 
-		@param filename: full path to source file
-		@type  filename: str
+		@param filepath: full path to source file
+		@type  filepath: str
 		@return: items with IDs
 		@rtype : dict
 		"""
 		i = 0
 		items = {}
-		for line in open(filename).readlines():
-			if line.strip() != "": #and not line.strip().startswith(ignorePrefix): # DEBUG'd
+		for line in open(filepath).readlines():
+			if line.strip() != "": #and not line.strip().startswith(ignorePrefix): # DEBUG: not yet implemented
 				i += 1
 				items[i] = line.strip()
 		return items
 
-	def write(self, items, filename):
+	def write(self, items, filepath):
 		"""
 		write items to file
 
 		@param items: items with IDs
 		@type  items: dict
-		@param filename: full path to target file
-		@type  filename: str
+		@param filepath: full path to target file
+		@type  filepath: str
 		@return: None
 		"""
 		keys = items.keys()
 		keys.sort()
-		f = open(filename, "w")
+		f = open(filepath, "w")
 		for key in keys:
 			f.write(items[key] + os.linesep) # DEBUG: inefficient?
 		f.close()
 
-	def add(self, text, filename):
+	def add(self, text, filepath):
 		"""
 		add new item
 
 		@param text: item text
 		@type  text: str
-		@param filename: full path to target file
-		@type  filename: str
+		@param filepath: full path to target file
+		@type  filepath: str
 		@return: None
 		"""
 		f = open(self.active, "a")
@@ -613,7 +613,7 @@ class config:
 		"""
 		read configuration file
 
-		@param filepath: configuration file
+		@param filepath: full path to source file
 		@type  filepath: str
 		@return: None
 		"""
