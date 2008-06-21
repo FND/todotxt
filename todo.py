@@ -18,6 +18,7 @@ Based on concept by Gina Trapani (http://todotxt.com) and original Python port b
 # * i18n: move strings to separate object
 # * use YAML?
 # * documentation (switches/options, commands)
+# * refactor configuration handling
 
 import sys
 import os
@@ -37,6 +38,7 @@ def main(args):
 		usage()
 		return
 	else:
+		plainMode = False
 		if POSIX():
 			cfgFile = os.getcwd() + os.sep
 		else:
@@ -568,14 +570,18 @@ class config:
 		"""
 		#self.priorityRE = re.compile(r"\([A-Z]\) ") # DEBUG'd
 		self.priorityRE = re.compile(r".*(\([A-Z]\)).*") # DEBUG: use r"^\([A-Z]\)"?
-		self.defaults = {
-			# preferences
+		# preferences
+		self.prefs = {
 			"baseDir": "~/todotxt/", # DEBUG: "~" not supported!?
 			"file_active": "tasks.txt",
 			"file_archive": "archive.txt",
 			"file_report": "report.txt",
-			"useUTC": False,
-			# colors
+			"useUTC": False
+		}
+		if not POSIX():
+			defaults["baseDir"] = os.getcwd() + os.sep
+		# colors
+		self.colors = {
 			"default": "\033[0m",
 			"white": "\033[1;37m",
 			"black": "\033[0;30m",
@@ -595,13 +601,11 @@ class config:
 			"light cyan": "\033[1;36m"
 		}
 		# highlight colors
-		self.defaults["A"] = self.defaults["light red"]
-		self.defaults["B"] = self.defaults["yellow"]
-		self.defaults["C"] = self.defaults["light blue"]
-		self.defaults["all"] = self.defaults["white"]
-		# platform-specific settings
-		if not POSIX():
-			defaults["baseDir"] = os.getcwd() + os.sep
+		self.highlightColors = dict()
+		self.highlightColors["A"] = self.colors["light red"]
+		self.highlightColors["B"] = self.colors["yellow"]
+		self.highlightColors["C"] = self.colors["light blue"]
+		self.highlightColors["all"] = self.colors["default"]
 
 	def read(self, filepath):
 		"""
@@ -611,19 +615,26 @@ class config:
 		@type  filepath: str
 		@return: None
 		"""
-		cfg = SafeConfigParser(self.defaults)
-		cfg.read(filepath)
+		# DEBUG: separate SafeConfigParser() instance per section really required (due to defaults)?
 		# preferences
+		cfg = SafeConfigParser(self.prefs)
+		cfg.read(filepath)
 		section = "preferences"
 		self.baseDir = cfg.get(section, "baseDir")
 		self.file_active = cfg.get(section, "file_active")
 		self.file_archive = cfg.get(section, "file_archive")
 		self.file_report = cfg.get(section, "file_report")
 		self.useUTC = cfg.get(section, "useUTC")
+		# colors
+		cfg = SafeConfigParser(self.colors)
+		cfg.read(filepath)
+		for k, v in cfg.items("colors"):
+			self.colors[k] = v
 		# highlight colors
-		section = "priorities"
-		for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-			self.highlightColors = self.colors[cfg.get(section, c)]
+		cfg = SafeConfigParser(self.highlightColors)
+		cfg.read(filepath)
+		for k, v in cfg.items("highlights"):
+			self.colors[k] = v
 
 	def write(self):
 		"""
