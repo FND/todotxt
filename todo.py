@@ -584,8 +584,6 @@ class config:
 			"file_report": "report.txt",
 			"useUTC": False
 		}
-		if not POSIX():
-			defaults["baseDir"] = os.getcwd() + os.sep
 		# colors
 		self.colors = {
 			"default": "\033[0m",
@@ -626,7 +624,7 @@ class config:
 		cfg = SafeConfigParser(self.prefs)
 		cfg.read(filepath)
 		section = "preferences"
-		self.baseDir = cfg.get(section, "baseDir")
+		self.baseDir = os.path.expanduser(cfg.get(section, "baseDir"))
 		self.file_active = cfg.get(section, "file_active")
 		self.file_archive = cfg.get(section, "file_archive")
 		self.file_report = cfg.get(section, "file_report")
