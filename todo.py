@@ -92,6 +92,131 @@ def dispatch(command, params):
 	else:
 		usage()
 
+# utility functions
+
+def highlightPriorityItems(match):
+	"""
+	highlight priority items
+
+	@param obj: [DEBUG: unclear]
+	@type  obj: [DEBUG: unclear]
+	@return: [DEBUG: unclear]
+	@rtype : [DEBUG: unclear]
+	"""
+	global cfg
+	if match.group(1) == "(A)":
+		return cfg.highlightColors["A"] + match.group(0) + cfg.colors["default"]
+	elif match.group(1) == "(B)":
+		return cfg.highlightColors["B"] + match.group(0) + cfg.colors["default"]
+	elif match.group(1) == "(C)":
+		return cfg.highlightColors["C"] + match.group(0) + cfg.colors["default"]
+	else:
+		return cfg.highlightColors["all"] + match.group(0) + cfg.colors["default"]
+
+def alphaSort(a, b):
+	"""
+	sort items alphabetically
+
+	@param a: first item
+	@type  a: str
+	@param b: second item
+	@type  b: str
+	@return: [DEBUG: unclear]
+	@rtype : int
+	"""
+	if (a[5:] > b[5:]): # DEBUG: why 5?
+		return 1
+	elif (a[5:] < b[5:]):
+		return -1
+	else:
+		return 0
+
+def purgeDict(dic, value = ""):
+	"""
+	equalize all values in a dictionary
+
+	@param dic: dictionary
+	@type  dic: dict
+	@param value: value
+	@type  value: [optional] mixed
+	@return: None
+	"""
+	for key in dic:
+		dic[key] = value
+
+def info(var): # DEBUG: for debugging only
+	"""
+	display variable information
+
+	@param var: variable
+	@type  var: mixed
+	@return: variable information
+	@rtype : str
+	"""
+	return '%s = %r %s' % (var, var, type(var))
+
+# instructions (help)
+
+def usage():
+	"""
+	display usage instructions
+
+	@return None
+	"""
+	text = "  Usage: " + sys.argv[0] + """ [options] [task]
+
+  Actions:
+    add "<task> +<project> @<context>"
+      Add task (project and context notation optional)
+
+    append <ID> "text"
+      Adds TEXT TO APPEND to the end of the todo on line NUMBER.
+      Quotes optional.
+
+    archive
+      Moves done items from todo.txt to done.txt.
+
+    rm NUMBER
+      Deletes the item on line NUMBER in todo.txt.
+
+    do NUMBER
+      Marks item on line NUMBER as done in todo.txt.
+
+    ls [TERM] [[TERM]...]
+      Displays all todo's that contain TERM(s) sorted by priority with line
+      numbers.  If no TERM specified, lists entire todo.txt.
+
+    lspri [PRIORITY]
+      Displays all items prioritized PRIORITY.
+      If no PRIORITY specified, lists all prioritized items.
+
+    pri NUMBER PRIORITY
+      Adds PRIORITY to todo on line NUMBER.  If the item is already
+      prioritized, replaces current priority with new PRIORITY.
+      PRIORITY must be an uppercase letter between A and Z.
+
+    replace NUMBER "UPDATED TODO"
+      Replaces todo on line NUMBER with UPDATED TODO.
+
+    remdup
+      Removes exact duplicate lines from todo.txt.
+
+    report
+      Adds the number of open todo's and closed done's to report.txt.
+
+  Options:
+    -p    plain mode (no colors)
+
+  More on the todo.txt manager at
+  http://todotxt.com
+  Version 1.5.2-python
+  Copyleft 2006, Gina Trapani (ginatrapani@gmail.com)
+  Copyleft 2006, Shane Koster (shane.koster@gmail.com)
+"""
+	print text
+
+# configuration -- DEBUG: make proper use of ConfigParser defaults
+
 # command handlers
 
 class commands:
@@ -414,131 +539,6 @@ class items:
 			if(displayMessage):
 				print "#%d: No such item." % id
 			return False
-
-# utility functions
-
-def highlightPriorityItems(match):
-	"""
-	highlight priority items
-
-	@param obj: [DEBUG: unclear]
-	@type  obj: [DEBUG: unclear]
-	@return: [DEBUG: unclear]
-	@rtype : [DEBUG: unclear]
-	"""
-	print info(match)
-	if match.group(1) == "(A)":
-		return highlightColors["A"] + match.group(0) + colors["default"]
-	elif match.group(1) == "(B)":
-		return highlightColors["B"] + match.group(0) + colors["default"]
-	elif match.group(1) == "(C)":
-		return highlightColors["C"] + match.group(0) + colors["default"]
-	else:
-		return highlightColors["all"] + match.group(0) + colors["default"]
-
-def alphaSort(a, b):
-	"""
-	sort items alphabetically
-
-	@param a: first item
-	@type  a: str
-	@param b: second item
-	@type  b: str
-	@return: [DEBUG: unclear]
-	@rtype : int
-	"""
-	if (a[5:] > b[5:]): # DEBUG: why 5?
-		return 1
-	elif (a[5:] < b[5:]):
-		return -1
-	else:
-		return 0
-
-def purgeDict(dic, value = ""):
-	"""
-	equalize all values in a dictionary
-
-	@param dic: dictionary
-	@type  dic: dict
-	@param value: value
-	@type  value: [optional] mixed
-	@return: None
-	"""
-	for key in dic:
-		dic[key] = value
-
-def info(var): # DEBUG: for debugging only
-	"""
-	display variable information
-
-	@param var: variable
-	@type  var: mixed
-	@return: variable information
-	@rtype : str
-	"""
-	return '%s = %r %s' % (var, var, type(var))
-
-# instructions (help)
-
-def usage():
-	"""
-	display usage instructions
-
-	@return None
-	"""
-	text = "  Usage: " + sys.argv[0] + """ [options] [task]
-
-  Actions:
-    add "<task> +<project> @<context>"
-      Add task (project and context notation optional)
-  
-    append <ID> "text"
-      Adds TEXT TO APPEND to the end of the todo on line NUMBER.
-      Quotes optional.
-  
-    archive
-      Moves done items from todo.txt to done.txt.
-  
-    rm NUMBER
-      Deletes the item on line NUMBER in todo.txt.
-  
-    do NUMBER
-      Marks item on line NUMBER as done in todo.txt.
-  
-    ls [TERM] [[TERM]...]
-      Displays all todo's that contain TERM(s) sorted by priority with line
-      numbers.  If no TERM specified, lists entire todo.txt.
-  
-    lspri [PRIORITY]
-      Displays all items prioritized PRIORITY.
-      If no PRIORITY specified, lists all prioritized items.
-  
-    pri NUMBER PRIORITY
-      Adds PRIORITY to todo on line NUMBER.  If the item is already
-      prioritized, replaces current priority with new PRIORITY.
-      PRIORITY must be an uppercase letter between A and Z.
-  
-    replace NUMBER "UPDATED TODO"
-      Replaces todo on line NUMBER with UPDATED TODO.
-  
-    remdup
-      Removes exact duplicate lines from todo.txt.
-  
-    report
-      Adds the number of open todo's and closed done's to report.txt.
-  
-  Options:
-    -p    plain mode (no colors)
-
-  More on the todo.txt manager at
-  http://todotxt.com
-  Version 1.5.2-python
-  Copyleft 2006, Gina Trapani (ginatrapani@gmail.com)
-  Copyleft 2006, Shane Koster (shane.koster@gmail.com)
-"""
-	print text
-
-# configuration -- DEBUG: make proper use of ConfigParser defaults
 
 class config:
 	def __init__(self, filename = ".todotxt"):
