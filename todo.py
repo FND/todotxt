@@ -42,27 +42,31 @@ def main(args):
 		plainMode = False
 		cfgFile = os.path.expanduser("~/.todotxt")
 		# process command-line options
-		for i in range(2):
+		for i in range(2): # options can be specified in any order -- DEBUG: inefficient?! use getopt/optparse?
 			if args[1] == "-p":
 				plainMode = True
 				args.pop(1)
 			if args[1] == "-c":
 				cfgFile = args.pop(2)
 				args.pop(1)
-		# process configuration
-		cfg = config()
-		cfg.read(cfgFile)
-		if plainMode or not POSIX():
-			# disable colors
-			purgeDict(cfg.colors)
-			purgeDict(cfg.highlightColors)
-		itm = items(cfg.baseDir + cfg.file_active,
-			cfg.baseDir + cfg.file_archive,
-			cfg.baseDir + cfg.file_report)
-		# process commands
-		cmd = args[1]
-		params = args[2:]
-		dispatch(cmd, params)
+		if len(args) < 2:
+			usage()
+			return
+		else:
+			# process configuration
+			cfg = config()
+			cfg.read(cfgFile)
+			if plainMode or not POSIX():
+				# disable colors
+				purgeDict(cfg.colors)
+				purgeDict(cfg.highlightColors)
+			itm = items(cfg.baseDir + cfg.file_active,
+				cfg.baseDir + cfg.file_archive,
+				cfg.baseDir + cfg.file_report)
+			# process commands
+			cmd = args[1]
+			params = args[2:]
+			dispatch(cmd, params)
 
 def dispatch(command, params):
 	"""
@@ -648,6 +652,6 @@ class config:
 
 # startup
 
-if __name__ == "__main__": # skip main() if module was imported
+if __name__ == "__main__": # skip main() if imported as module
 	sys.exit(main(sys.argv))
 
