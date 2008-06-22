@@ -40,10 +40,7 @@ def main(args):
 		return
 	else:
 		plainMode = False
-		if POSIX():
-			cfgFile = os.getcwd() + os.sep
-		else:
-			cfgFile = "~/.todotxt" # DEBUG: "~" not supported?
+		cfgFile = os.path.expanduser("~/.todotxt")
 		# process command-line options
 		for i in range(2):
 			if args[1] == "-p":
