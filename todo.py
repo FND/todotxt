@@ -9,7 +9,7 @@ Version: 2.0.0 alpha
 Based on concept by Gina Trapani (http://todotxt.com) and original Python port by Shane Koster.
 """
 
-# To Do -- DEBUG: temporary
+# To Do
 # * read settings from file
 # * implement date threshold for tasks (items appearing in list only after a certain date)
 # * error handling for file I/O
@@ -42,7 +42,7 @@ def main(args):
 		plainMode = False
 		cfgFile = os.path.expanduser("~/.todotxt")
 		# process command-line options
-		for i in range(2): # options can be specified in any order -- DEBUG: inefficient?! use getopt/optparse?
+		for i in range(2): # options can be specified in any order -- XXX: inefficient?! use getopt/optparse?
 			if args[1] == "-p":
 				plainMode = True
 				args.pop(1)
@@ -92,7 +92,7 @@ def dispatch(command, params):
 		"archive": lambda: itm.archive(),
 		"report": lambda: itm.generateReport(),
 		"help": lambda: usage()
-	} # DEBUG: can be reused for documentation!?
+	} # XXX: can be reused for documentation!?
 	# aliases
 	cmds["a"] = cmds["add"]
 	cmds["p"] = cmds["pri"]
@@ -110,10 +110,10 @@ def highlightPriorityItems(match):
 	"""
 	highlight priority items
 
-	@param obj: [DEBUG: unclear]
-	@type  obj: [DEBUG: unclear]
-	@return: [DEBUG: unclear]
-	@rtype : [DEBUG: unclear]
+	@param obj: [XXX: unclear]
+	@type  obj: [XXX: unclear]
+	@return: [XXX: unclear]
+	@rtype : [XXX: unclear]
 	"""
 	global cfg
 	print match # DEBUG
@@ -135,10 +135,10 @@ def alphaSort(a, b):
 	@type  a: str
 	@param b: second item
 	@type  b: str
-	@return: [DEBUG: unclear]
+	@return: [XXX: unclear]
 	@rtype : int
 	"""
-	if (a[5:] > b[5:]): # DEBUG: why 5?
+	if (a[5:] > b[5:]): # XXX: why 5?
 		return 1
 	elif (a[5:] < b[5:]):
 		return -1
@@ -165,12 +165,12 @@ def POSIX():
 	@return: POSIX-compliance
 	@rtype : bool
 	"""
-	if sys.platform == "win32" or os.name in ["nt", "ce"]: # DEBUG: improve conditions
+	if sys.platform == "win32" or os.name in ["nt", "ce"]: # TODO: improve conditions
 		return False
 	else:
 		return True
 
-def info(var): # DEBUG: for debugging only
+def info(var): # DEBUG: for testing purposes only only
 	"""
 	display variable information
 
@@ -241,14 +241,14 @@ def usage():
 """
 	print text
 
-# configuration -- DEBUG: make proper use of ConfigParser defaults
+# configuration -- XXX: make proper use of ConfigParser defaults
 
 # command handlers
 
 class commands:
 	def add(self, params):
 		"""
-		[DEBUG: to do]
+		[TODO]
 
 		@param params: parameters to pass through
 		@type  params: list
@@ -257,11 +257,11 @@ class commands:
 		if params:
 			addItem(" ".join(params), itm.file_active)
 		else:
-			print "Usage: " + sys.argv[0] + " add <text> [+<project>] [@<context>]" # DEBUG: duplication; cf. usage() (also see below)
+			print "Usage: " + sys.argv[0] + " add <text> [+<project>] [@<context>]" # XXX: duplication; cf. usage() (also see below)
 
 	def prioritize(self, params):
 		"""
-		[DEBUG: to do]
+		[TODO]
 
 		@param params: parameters to pass through
 		@type  params: list
@@ -276,7 +276,7 @@ class commands:
 
 	def append(self, params):
 		"""
-		[DEBUG: to do]
+		[TODO]
 
 		@param params: parameters to pass through
 		@type  params: list
@@ -289,7 +289,7 @@ class commands:
 
 	def replace(self, params):
 		"""
-		[DEBUG: to do]
+		[TODO]
 
 		@param params: parameters to pass through
 		@type  params: list
@@ -302,7 +302,7 @@ class commands:
 
 	def remove(self, params):
 		"""
-		[DEBUG: to do]
+		[TODO]
 
 		@param params: parameters to pass through
 		@type  params: list
@@ -315,7 +315,7 @@ class commands:
 
 	def flag(self, params):
 		"""
-		[DEBUG: to do]
+		[TODO]
 
 		@param params: parameters to pass through
 		@type  params: list
@@ -328,7 +328,7 @@ class commands:
 
 	def list(self, params):
 		"""
-		[DEBUG: to do]
+		[TODO]
 
 		@param params: parameters to pass through
 		@type  params: list
@@ -342,7 +342,7 @@ class commands:
 
 	def listPriorities(self, params):
 		"""
-		[DEBUG: to do]
+		[TODO]
 
 		@param params: parameters to pass through
 		@type  params: list
@@ -387,7 +387,7 @@ class items:
 			with open(filepath, "r") as f:
 				i = 0
 				for line in f:
-					if line.strip() != "": #and not line.strip().startswith(ignorePrefix): # DEBUG: not yet implemented
+					if line.strip() != "": #and not line.strip().startswith(ignorePrefix): # XXX: not yet implemented
 						i += 1
 						items[i] = line.strip()
 		except:
@@ -408,7 +408,7 @@ class items:
 		keys.sort()
 		with open(filepath, "w") as f:
 			for key in keys:
-				f.write(items[key] + os.linesep) # DEBUG: inefficient?
+				f.write(items[key] + os.linesep) # XXX: inefficient?
 
 	def add(self, text, filepath):
 		"""
@@ -422,9 +422,9 @@ class items:
 		"""
 		with open(self.file_active, "a") as f:
 			f.write(text + os.linesep)
-		# DEBUG: return/report ID of new item
+		# TODO: return/report ID of new item
 
-	def modify(self, action, id, text = ""): # DEBUG: split into three separate functions?
+	def modify(self, action, id, text = ""): # TODO: split into three separate functions?
 		"""
 		modify existing item
 
@@ -439,7 +439,7 @@ class items:
 		items = self.get(self.file_active)
 		if(itemExists(items, id, True)):
 			# appending
-			if action == "append": # DEBUG: proper replacement for switch()...case?
+			if action == "append": # TODO: proper replacement for switch()...case?
 				items[id] = items[id] + text
 			# replacing
 			elif action == "replace":
@@ -448,7 +448,7 @@ class items:
 			elif action == "remove":
 				items.pop(id)
 			# flagging
-			elif action == "flag": # DEBUG: rename?
+			elif action == "flag": # TODO: rename?
 				if useUTC:
 					date = time.strftime("%Y-%m-%d", time.gmtime())
 				else:
@@ -497,7 +497,7 @@ class items:
 		@return: None
 		"""
 		items = self.get(self.file_active)
-		activeItems = items.copy() # DEBUG: duplication necessary?
+		activeItems = items.copy() # XXX: duplication necessary?
 		archivedItems = self.get(self.file_archive)
 		# move flagged items to archive
 		for k, v in items.iteritems():
@@ -530,9 +530,9 @@ class items:
 		selection.sort(alphaSort) # sort by tasks alphbetically
 		# highlight priority items
 		for item in selection:
-			print priorityRE.sub(highlightPriorities, item) # DEBUG: ?
+			print priorityRE.sub(highlightPriorities, item) # XXX: ?
 
-	def generateReport(self): # DEBUG: integrate birdseye.py?
+	def generateReport(self): # TODO: integrate birdseye.py?
 		"""
 		generate overview of active and archived items
 
@@ -547,7 +547,7 @@ class items:
 			f.write(string + os.linesep)
 
 	def removeDuplicates(self, items):
-		pass # DEBUG: to do
+		pass # TODO
 
 	def exists(self, items, id, displayMessage = False):
 		"""
@@ -577,10 +577,10 @@ class config:
 		@return: None
 		"""
 		#self.priorityRE = re.compile(r"\([A-Z]\) ") # DEBUG'd
-		self.priorityRE = re.compile(r".*(\([A-Z]\)).*") # DEBUG: use r"^\([A-Z]\)"?
+		self.priorityRE = re.compile(r".*(\([A-Z]\)).*") # TODO: use r"^\([A-Z]\)"?
 		# preferences
 		self.prefs = {
-			"baseDir": "~/todotxt/", # DEBUG: "~" not supported!?
+			"baseDir": "~/todotxt/", # XXX: "~" not supported!?
 			"file_active": "tasks.txt",
 			"file_archive": "archive.txt",
 			"file_report": "report.txt",
@@ -621,7 +621,7 @@ class config:
 		@type  filepath: str
 		@return: None
 		"""
-		# DEBUG: separate SafeConfigParser() instance per section really required (due to defaults)?
+		# XXX: separate SafeConfigParser() instance per section really required (due to defaults)?
 		# preferences
 		cfg = SafeConfigParser(self.prefs)
 		cfg.read(filepath)
@@ -648,7 +648,7 @@ class config:
 
 		@return: None
 		"""
-		pass # DEBUG: to do
+		pass # TODO
 
 # startup
 
