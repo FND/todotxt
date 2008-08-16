@@ -79,20 +79,20 @@ def dispatch(command, params):
 	"""
 	global itm
 	cmd = commands()
-	cmds = { # N.B.: lambdas required due to varying number of function arguments
-		"add": lambda: cmd.add(params),
-		"pri": lambda: cmd.prioritize(params),
-		"append": lambda: cmd.append(params),
-		"replace": lambda: cmd.replace(params),
-		"rm": lambda: cmd.remove(params),
-		"flag": lambda: cmd.flag(params),
-		"rmdup": lambda: cmd.removeDuplicates(),
-		"list": lambda: cmd.list(params),
-		"listpri": lambda: cmd.listPriorities(params),
-		"archive": lambda: itm.archive(),
-		"report": lambda: itm.generateReport(),
-		"help": lambda: usage()
-	} # XXX: can be reused for documentation!?
+	cmds = {
+		"add": cmd.add,
+		"pri": cmd.prioritize,
+		"append": cmd.append,
+		"replace": cmd.replace,
+		"rm": cmd.remove,
+		"flag": cmd.flag,
+		"rmdup": cmd.removeDuplicates,
+		"list": cmd.list,
+		"listpri": cmd.listPriorities,
+		"archive": itm.archive,
+		"report": itm.generateReport,
+		"help": usage
+	} # TODO: can be reused for documentation!?
 	# aliases
 	cmds["a"] = cmds["add"]
 	cmds["p"] = cmds["pri"]
@@ -100,7 +100,8 @@ def dispatch(command, params):
 	cmds["lsp"] = cmds["listpri"]
 	# execute
 	if command in cmds:
-		cmds[command]()
+		params = [params] if params else [] # ensure params is not unpacked when passed as argument 
+		cmds[command](*params) # XXX: params is not guaranteed to be empty when it should be
 	else:
 		usage()
 
