@@ -101,7 +101,10 @@ def dispatch(command, params):
 	# execute
 	if command in cmds:
 		params = [params] if params else [] # ensure params is not unpacked when passed as argument 
-		cmds[command](*params) # XXX: params is not guaranteed to be empty when it should be
+		try:
+			cmds[command](*params)
+		except: # spurious params
+			usage()
 	else:
 		usage()
 
