@@ -54,13 +54,13 @@ def main(args):
 			return
 		else:
 			# process configuration
-			cfg = config()
+			cfg = Config()
 			cfg.read(cfgFile)
 			if plainMode or not POSIX():
 				# disable colors
 				purgeDict(cfg.colors)
 				purgeDict(cfg.highlightColors)
-			itm = items(cfg.baseDir + cfg.file_active,
+			itm = Items(cfg.baseDir + cfg.file_active,
 				cfg.baseDir + cfg.file_archive,
 				cfg.baseDir + cfg.file_report)
 			# process commands
@@ -78,7 +78,7 @@ def dispatch(command, params):
 	@type  params: list
 	"""
 	global itm
-	cmd = commands()
+	cmd = Commands()
 	cmds = {
 		"add": cmd.add,
 		"pri": cmd.prioritize,
@@ -249,7 +249,7 @@ def usage():
 
 # command handlers
 
-class commands:
+class Commands:
 	def add(self, params):
 		"""
 		[TODO]
@@ -360,7 +360,7 @@ class commands:
 
 # item functions
 
-class items:
+class Items:
 	def __init__(self, active, archive, report):
 		"""
 		initialize item files
@@ -573,7 +573,7 @@ class items:
 				print "#%d: No such item." % id
 			return False
 
-class config:
+class Config:
 	def __init__(self):
 		"""
 		default configuration
