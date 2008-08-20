@@ -32,7 +32,7 @@ from ConfigParser import SafeConfigParser
 cfg = None
 itm = None
 
-def main(args):
+def main(args = []):
 	global cfg
 	global itm
 	if len(args) < 2:
