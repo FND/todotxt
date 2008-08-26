@@ -1,8 +1,3 @@
-# To Do:
-# * explore doctest:
-#	http://docs.python.org/lib/module-doctest.html
-#	http://docs.python.org/lib/doctest-simple-testfile.html
-
 import unittest
 import todo
 
@@ -56,6 +51,6 @@ class DisableColorTestCase(unittest.TestCase):
 		for color in todo.priorityColors.values():
 			self.assertEquals("", color)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	unittest.main()
 

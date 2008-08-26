@@ -10,6 +10,7 @@ Based on concept by Gina Trapani (http://todotxt.com) and original Python port b
 """
 
 # To Do
+# * use list instead of dict for items!?
 # * read settings from file
 # * implement date threshold for tasks (items appearing in list only after a certain date)
 # * error handling for file I/O
@@ -20,7 +21,6 @@ Based on concept by Gina Trapani (http://todotxt.com) and original Python port b
 # * documentation (switches/options, commands)
 # * refactor configuration handling
 
-from __future__ import with_statement
 import sys
 import os
 import time
@@ -173,6 +173,12 @@ def POSIX():
 		return False
 	else:
 		return True
+
+def fileError(filepath)
+	"""
+	report I/O error
+	"""
+	return "error accessing file: %s" % filepath
 
 def info(var): # DEBUG: for testing purposes only only
 	"""
@@ -387,15 +393,14 @@ class Items:
 		@rtype : dict
 		"""
 		items = {}
+		i = 0
 		try:
-			with open(filepath, "r") as f:
-				i = 0
-				for line in f:
-					if line.strip() != "": #and not line.strip().startswith(ignorePrefix): # XXX: not yet implemented
-						i += 1
-						items[i] = line.strip()
-		except:
-			print "error accessing file: " + filepath
+			for line in open(filepath, "r"):
+				if line.strip() != "": #and not line.strip().startswith(ignorePrefix): # XXX: not yet implemented
+					i += 1
+					items[i] = line.strip()
+		except IOError:
+			print fileError(filepath)
 		return items
 
 	def write(self, items, filepath):
@@ -410,9 +415,12 @@ class Items:
 		"""
 		keys = items.keys()
 		keys.sort()
-		with open(filepath, "w") as f:
-			for key in keys:
-				f.write(items[key] + os.linesep) # XXX: inefficient?
+		lines = [items[key] for key in keys]
+		try:
+			f = open(filepath, "w")
+			f.write(os.linesep.join(lines))
+		except IOError:
+			print fileError(filepath)
 
 	def add(self, text, filepath):
 		"""
@@ -424,8 +432,11 @@ class Items:
 		@type  filepath: str
 		@return: None
 		"""
-		with open(self.file_active, "a") as f:
+		try:
+			f = open(self.file_active, "a")
 			f.write(text + os.linesep)
+		except IOError:
+			print fileError(filepath)
 		# TODO: return/report ID of new item
 
 	def modify(self, action, id, text = ""): # TODO: split into three separate functions?
@@ -546,9 +557,12 @@ class Items:
 		activeItems = self.get(self.file_active)
 		archivedItems = self.get(self.file_archive)
 		date = time.strftime("%Y-%m-%d-%T", time.localtime())
-		with open(self.file_report, "a") as f:
-			string = "%s %d %d" % (date, len(activeItems), len(archivedItems))
+		string = "%s %d %d" % (date, len(activeItems), len(archivedItems))
+		try:
+			f = open(self.file_report, "a") # XXX: overwrite instead of appending?
 			f.write(string + os.linesep)
+		except IOError:
+			print fileError(filepath)
 
 	def removeDuplicates(self, items):
 		pass # TODO
