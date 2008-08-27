@@ -1,0 +1,15 @@
+== Basics ==
+
+* cf. SPECS
+
+== Additional Features ==
+
+* switch for custom config file
+* scheduled tasks
+
+== Misc. ==
+
+* code documentation (Epydoc)
+* build script (merging modules into a single script file, consolidating import statments)
+* license (BSD?)
+* i18n: move strings to separate object

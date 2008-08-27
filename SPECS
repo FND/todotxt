@@ -1,0 +1,27 @@
+== Commands ==
+
+* add <str>					add task
+* append <ID> <str>			add <str> to the end of item <ID>
+* replace <ID> <str>		replace item <ID> with <str>
+* pri <ID> <priority>		set <priority> for item <ID>
+* do <ID>					mark item <ID> as completed
+* rm <ID>					delete item <ID>
+
+* list [<terms>]			display all items containing <terms>, sorted by priority
+* listpri [<priority>]		display all items with priority <priority>
+
+* archive					move completed items from the list of active items to the archive
+* remdup					remove duplicates from the list of active items
+
+* report					add the number of active and completed items to the report
+
+== Options ==
+
+* -p		plain mode (no colored output)
+
+== Configuration Settings ==
+
+* base dir (for local storage)
+* colored output
+* priority colors
+* use UTC
