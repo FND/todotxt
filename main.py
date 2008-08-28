@@ -30,10 +30,8 @@ class Items:
 		"""
 		add new active item
 
-		@param text: item text
-		@type  text: str
-		@return: item index
-		@rtype : int
+		@param text (str): item text
+		@return (int): item index
 		"""
 		self.active.append(text)
 		return len(self.active) - 1
@@ -42,10 +40,8 @@ class Items:
 		"""
 		remove active item
 
-		@param id: item ID
-		@type  id: int
-		@return: item text
-		@rtype : str
+		@param id (int): item ID
+		@return (str): item text
 		@raise IndexError: item does not exist
 		"""
 		return self.active.pop(id)
@@ -54,12 +50,9 @@ class Items:
 		"""
 		add text to active item
 
-		@param id: item ID
-		@type  id: int
-		@param text: additional item text
-		@type  text: str
-		@return: new item text
-		@rtype : str
+		@param id (int): item ID
+		@param text (str): additional item text
+		@return (str): new item text
 		@raise IndexError: item does not exist
 		"""
 		self.active[id] += text
@@ -69,12 +62,9 @@ class Items:
 		"""
 		replace active item
 
-		@param id: item ID
-		@type  id: int
-		@param text: new item text
-		@type  text: str
-		@return: old item text
-		@rtype : str
+		@param id (int): item ID
+		@param text (str): new item text
+		@return (str): old item text
 		@raise IndexError: item does not exist
 		"""
 		old = self.active[id]
@@ -85,12 +75,9 @@ class Items:
 		"""
 		flag active item and add timestamp
 
-		@param id: item ID
-		@type  id: int
-		@param useUTC: use UTC for timestamp
-		@type  useUTC: bool
-		@return: new item text
-		@rtype : str
+		@param id (int): item ID
+		@param useUTC (bool): use UTC for timestamp
+		@return (str): new item text
 		@raise IndexError: item does not exist
 		"""
 		timeFormat = "%Y-%m-%d" # TODO: customizable?
