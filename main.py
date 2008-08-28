@@ -12,14 +12,16 @@ Original Python port by Shane Koster.
 """
 
 import sys
+import time
 
 def main(args = []):
 	return # TODO
 
-class Items:
+class Items: # XXX: let exceptions rise to the caller (@raises IndexError) -- #TODO: continue here
 	def __init__(self):
 		self.active = []
 		self.closed = []
+		self.flagChar = "x"
 
 	def get(self, source): # XXX: does not belong here?
 		pass # TODO
@@ -75,8 +77,6 @@ class Items:
 		@type  id: int
 		@param text: new item text
 		@type  text: str
-		@param append: append instead of replacing item text
-		@type  append: bool
 		@return: old item text (False on failure)
 		@rtype : str or bool
 		"""
@@ -84,6 +84,28 @@ class Items:
 			old = self.active[id]
 			self.active[id] = text
 			return old # XXX: logically insane?
+		except IndexError:
+			return False
+
+	def flag(self, id, useUTC = True):
+		"""
+		flag active item and add timestamp
+
+		@param id: item ID
+		@type  id: int
+		@param useUTC: use UTC for timestamp
+		@type  useUTC: bool
+		@return: success
+		@rtype : bool
+		"""
+		timeFormat = "%Y-%m-%d" # TODO: customizable?
+		if useUTC:
+			date = time.strftime(timeFormat, time.gmtime())
+		else:
+			date = time.strftime(timeFormat, time.localtime())
+		try:
+			self.active[id] = "%s %s %s" % (self.flagChar, date, self.active[id])
+			return True
 		except IndexError:
 			return False
 

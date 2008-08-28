@@ -1,4 +1,5 @@
 import unittest
+import time
 import main
 
 class mainTestCase(unittest.TestCase):
@@ -22,15 +23,20 @@ class ItemsTestCase(unittest.TestCase):
 	def tearDown(self):
 		pass
 
-	def testInitCreatesActiveItems(self):
-		"""__init__ creates active items"""
+	def testInitInitializesActiveItems(self):
+		"""__init__ initializes active items"""
 		expected = ["lorem", "ipsum", "dolor"] # populated due to setUp
 		self.assertEquals(expected, self.items.active)
 
-	def testInitCreatesClosedItems(self):
-		"""__init__ creates closed items"""
+	def testInitInitializesClosedItems(self):
+		"""__init__ initializes closed items"""
 		expected = []
 		self.assertEquals(expected, self.items.closed)
+
+	def testInitInitializesFlagChar(self):
+		"""__init__ initializes flag character"""
+		expected = "x"
+		self.assertEquals(expected, self.items.flagChar)
 
 	def testAddAppendsItem(self):
 		"""add creates new active item"""
@@ -90,6 +96,36 @@ class ItemsTestCase(unittest.TestCase):
 		"""replace returns False if specified item does not exist"""
 		expected = False
 		self.assertEquals(expected, self.items.replace(3, "foo"))
+
+	def testFlagAddsFlagChar(self):
+		"""flag adds flag character as first prefix"""
+		self.items.flag(1)
+		expected = "x "
+		self.assertEquals(expected, self.items.active[1][0:2])
+
+	def testFlagAddsTimestamp(self):
+		"""flag adds timestamp as second prefix"""
+		self.items.flag(1)
+		expected = time.strftime("%Y-%m-%d", time.gmtime())
+		self.assertEquals(expected, self.items.active[1][2:12])
+
+	def testFlagTimestampUsesISO8603Date(self):
+		"""flag timestamp uses ISO-8601 date format"""
+		self.items.flag(1, False)
+		expected = time.strftime("%Y-%m-%d", time.localtime())
+		self.assertEquals(expected, self.items.active[1][2:12])
+
+	def testFlagUsesUTCByDefault(self):
+		"""flag timestamp uses UTC by default"""
+		self.items.flag(1)
+		expected = time.strftime("%Y-%m-%d", time.gmtime())
+		self.assertEquals(expected, self.items.active[1][2:12])
+
+	def testFlagSupportsLocalTime(self):
+		"""flag timestamp supports local time"""
+		self.items.flag(1, False)
+		expected = time.strftime("%Y-%m-%d", time.localtime())
+		self.assertEquals(expected, self.items.active[1][2:12])
 
 if __name__ == "__main__":
 	unittest.main()
