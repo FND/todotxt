@@ -17,7 +17,7 @@ import time
 def main(args = []):
 	return # TODO
 
-class Items: # XXX: let exceptions rise to the caller (@raises IndexError) -- #TODO: continue here
+class Items:
 	def __init__(self):
 		self.active = []
 		self.closed = []
@@ -46,11 +46,9 @@ class Items: # XXX: let exceptions rise to the caller (@raises IndexError) -- #T
 		@type  id: int
 		@return: item text
 		@rtype : str
+		@raise IndexError: item does not exist
 		"""
-		try:
-			return self.active.pop(id)
-		except IndexError:
-			return False
+		return self.active.pop(id)
 
 	def append(self, id, text):
 		"""
@@ -60,14 +58,12 @@ class Items: # XXX: let exceptions rise to the caller (@raises IndexError) -- #T
 		@type  id: int
 		@param text: additional item text
 		@type  text: str
-		@return: new item text (False on failure)
-		@rtype : str or bool
+		@return: new item text
+		@rtype : str
+		@raise IndexError: item does not exist
 		"""
-		try:
-			self.active[id] += text
-			return self.active[id]
-		except IndexError:
-			return False
+		self.active[id] += text
+		return self.active[id]
 
 	def replace(self, id, text):
 		"""
@@ -77,15 +73,13 @@ class Items: # XXX: let exceptions rise to the caller (@raises IndexError) -- #T
 		@type  id: int
 		@param text: new item text
 		@type  text: str
-		@return: old item text (False on failure)
-		@rtype : str or bool
+		@return: old item text
+		@rtype : str
+		@raise IndexError: item does not exist
 		"""
-		try:
-			old = self.active[id]
-			self.active[id] = text
-			return old # XXX: logically insane?
-		except IndexError:
-			return False
+		old = self.active[id]
+		self.active[id] = text
+		return old
 
 	def flag(self, id, useUTC = True):
 		"""
@@ -95,19 +89,17 @@ class Items: # XXX: let exceptions rise to the caller (@raises IndexError) -- #T
 		@type  id: int
 		@param useUTC: use UTC for timestamp
 		@type  useUTC: bool
-		@return: success
-		@rtype : bool
+		@return: new item text
+		@rtype : str
+		@raise IndexError: item does not exist
 		"""
 		timeFormat = "%Y-%m-%d" # TODO: customizable?
 		if useUTC:
 			date = time.strftime(timeFormat, time.gmtime())
 		else:
 			date = time.strftime(timeFormat, time.localtime())
-		try:
-			self.active[id] = "%s %s %s" % (self.flagChar, date, self.active[id])
-			return True
-		except IndexError:
-			return False
+		self.active[id] = "%s %s %s" % (self.flagChar, date, self.active[id])
+		return self.active[id]
 
 	def archive(self, id):
 		pass # TODO

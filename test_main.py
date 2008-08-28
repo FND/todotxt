@@ -60,10 +60,10 @@ class ItemsTestCase(unittest.TestCase):
 		expected = "ipsum"
 		self.assertEquals(expected, self.items.remove(1))
 
-	def testRemoveReturnsFalseOnFailure(self):
-		"""remove returns False if specified item does not exist"""
-		expected = False
-		self.assertEquals(expected, self.items.remove(3))
+	def testRemoveRaisesIndexErrorOnFailure(self):
+		"""remove raises IndexError if specified item does not exist"""
+		expected = IndexError
+		self.assertRaises(expected, self.items.remove, 3)
 
 	def testAppendAddsItemText(self):
 		"""append adds text to the end of specified item"""
@@ -76,10 +76,10 @@ class ItemsTestCase(unittest.TestCase):
 		expected = "ipsum foo"
 		self.assertEquals(expected, self.items.append(1, " foo"))
 
-	def testAppendReturnsFalseOnFailure(self):
-		"""append returns False if specified item does not exist"""
-		expected = False
-		self.assertEquals(expected, self.items.append(3, " foo"))
+	def testAppendRaisesIndexErrorOnFailure(self):
+		"""append raises IndexError if specified item does not exist"""
+		expected = IndexError
+		self.assertRaises(expected, self.items.append, 3, " foo")
 
 	def testReplaceSubstitutesItemText(self):
 		"""replace substitutes text of specified item"""
@@ -92,10 +92,10 @@ class ItemsTestCase(unittest.TestCase):
 		expected = "ipsum"
 		self.assertEquals(expected, self.items.replace(1, "foo"))
 
-	def testReplaceReturnsFalseOnFailure(self):
-		"""replace returns False if specified item does not exist"""
-		expected = False
-		self.assertEquals(expected, self.items.replace(3, "foo"))
+	def testReplaceRaisesIndexErrorOnFailure(self):
+		"""replace raises IndexError if specified item does not exist"""
+		expected = IndexError
+		self.assertRaises(expected, self.items.replace, 3, "foo")
 
 	def testFlagAddsFlagChar(self):
 		"""flag adds flag character as first prefix"""
@@ -126,6 +126,11 @@ class ItemsTestCase(unittest.TestCase):
 		self.items.flag(1, False)
 		expected = time.strftime("%Y-%m-%d", time.localtime())
 		self.assertEquals(expected, self.items.active[1][2:12])
+
+	def testFlagRaisesIndexErrorOnFailure(self):
+		"""flag raises IndexError if specified item does not exist"""
+		expected = IndexError
+		self.assertRaises(expected, self.items.flag, 3)
 
 if __name__ == "__main__":
 	unittest.main()
