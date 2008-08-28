@@ -16,6 +16,7 @@ class mainTestCase(unittest.TestCase):
 class ItemsTestCase(unittest.TestCase):
 	def setUp(self):
 		self.items = main.Items()
+		self.items.active = ["lorem", "ipsum", "dolor"]
 		pass
 
 	def tearDown(self):
@@ -23,7 +24,7 @@ class ItemsTestCase(unittest.TestCase):
 
 	def testInitCreatesActiveItems(self):
 		"""__init__ creates active items"""
-		expected = []
+		expected = ["lorem", "ipsum", "dolor"] # populated due to setUp
 		self.assertEquals(expected, self.items.active)
 
 	def testInitCreatesClosedItems(self):
@@ -34,68 +35,59 @@ class ItemsTestCase(unittest.TestCase):
 	def testAddAppendsItem(self):
 		"""add creates new active item"""
 		self.items.add("foo")
-		expected = ["foo"]
+		expected = ["lorem", "ipsum", "dolor", "foo"]
 		self.assertEquals(expected, self.items.active)
 
 	def testAddReturnsID(self):
 		"""add returns new item ID"""
-		expected = 0
+		expected = 3
 		self.assertEquals(expected, self.items.add("foo"))
 
 	def testRemoveDeletesItem(self):
 		"""remove deletes specified active item"""
-		self.items.active = ["foo", "bar", "baz"]
 		self.items.remove(1)
-		expected = ["foo", "baz"]
+		expected = ["lorem", "dolor"]
 		self.assertEquals(expected, self.items.active)
 
 	def testRemoveReturnsOldText(self):
 		"""remove returns deleted item's text"""
-		self.items.active = ["foo", "bar", "baz"]
-		expected = "bar"
+		expected = "ipsum"
 		self.assertEquals(expected, self.items.remove(1))
 
 	def testRemoveReturnsFalseOnFailure(self):
 		"""remove returns False if specified item does not exist"""
-		self.items.active = ["foo", "bar", "baz"]
 		expected = False
 		self.assertEquals(expected, self.items.remove(3))
 
 	def testAppendAddsItemText(self):
 		"""append adds text to the end of specified item"""
-		self.items.active = ["foo", "bar", "baz"]
 		self.items.append(1, " foo")
-		expected = "bar foo"
+		expected = "ipsum foo"
 		self.assertEquals(expected, self.items.active[1])
 
 	def testAppendReturnsNewText(self):
 		"""append returns new item text"""
-		self.items.active = ["foo", "bar", "baz"]
-		expected = "bar foo"
+		expected = "ipsum foo"
 		self.assertEquals(expected, self.items.append(1, " foo"))
 
 	def testAppendReturnsFalseOnFailure(self):
 		"""append returns False if specified item does not exist"""
-		self.items.active = ["foo", "bar", "baz"]
 		expected = False
 		self.assertEquals(expected, self.items.append(3, " foo"))
 
 	def testReplaceSubstitutesItemText(self):
 		"""replace substitutes text of specified item"""
-		self.items.active = ["foo", "bar", "baz"]
 		self.items.replace(1, "foo")
 		expected = "foo"
 		self.assertEquals(expected, self.items.active[1])
 
 	def testReplaceReturnsOldText(self):
 		"""replace returns previous item text"""
-		self.items.active = ["foo", "bar", "baz"]
-		expected = "bar"
+		expected = "ipsum"
 		self.assertEquals(expected, self.items.replace(1, "foo"))
 
 	def testReplaceReturnsFalseOnFailure(self):
 		"""replace returns False if specified item does not exist"""
-		self.items.active = ["foo", "bar", "baz"]
 		expected = False
 		self.assertEquals(expected, self.items.replace(3, "foo"))
 
