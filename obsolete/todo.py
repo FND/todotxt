@@ -439,7 +439,7 @@ class Items:
 			print fileError(filepath)
 		# TODO: return/report ID of new item
 
-	def modify(self, action, id, text = ""): # TODO: split into three separate functions?
+	def modify(self, action, id, text = ""): # TODO: split into four separate functions?
 		"""
 		modify existing item
 

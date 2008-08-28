@@ -50,8 +50,42 @@ class Items:
 		except IndexError:
 			return False
 
-	def modify(self, id, text):
-		pass # TODO
+	def append(self, id, text):
+		"""
+		add text to active item
+
+		@param id: item ID
+		@type  id: int
+		@param text: additional item text
+		@type  text: str
+		@return: new item text (False on failure)
+		@rtype : str or bool
+		"""
+		try:
+			self.active[id] += text
+			return self.active[id]
+		except IndexError:
+			return False
+
+	def replace(self, id, text):
+		"""
+		replace active item
+
+		@param id: item ID
+		@type  id: int
+		@param text: new item text
+		@type  text: str
+		@param append: append instead of replacing item text
+		@type  append: bool
+		@return: old item text (False on failure)
+		@rtype : str or bool
+		"""
+		try:
+			old = self.active[id]
+			self.active[id] = text
+			return old # XXX: logically insane?
+		except IndexError:
+			return False
 
 	def archive(self, id):
 		pass # TODO

@@ -61,6 +61,44 @@ class ItemsTestCase(unittest.TestCase):
 		expected = False
 		self.assertEquals(expected, self.items.remove(3))
 
+	def testAppendAddsItemText(self):
+		"""append adds text to the end of specified item"""
+		self.items.active = ["foo", "bar", "baz"]
+		self.items.append(1, " foo")
+		expected = "bar foo"
+		self.assertEquals(expected, self.items.active[1])
+
+	def testAppendReturnsNewText(self):
+		"""append returns new item text"""
+		self.items.active = ["foo", "bar", "baz"]
+		expected = "bar foo"
+		self.assertEquals(expected, self.items.append(1, " foo"))
+
+	def testAppendReturnsFalseOnFailure(self):
+		"""append returns False if specified item does not exist"""
+		self.items.active = ["foo", "bar", "baz"]
+		expected = False
+		self.assertEquals(expected, self.items.append(3, " foo"))
+
+	def testReplaceSubstitutesItemText(self):
+		"""replace substitutes text of specified item"""
+		self.items.active = ["foo", "bar", "baz"]
+		self.items.replace(1, "foo")
+		expected = "foo"
+		self.assertEquals(expected, self.items.active[1])
+
+	def testReplaceReturnsOldText(self):
+		"""replace returns previous item text"""
+		self.items.active = ["foo", "bar", "baz"]
+		expected = "bar"
+		self.assertEquals(expected, self.items.replace(1, "foo"))
+
+	def testReplaceReturnsFalseOnFailure(self):
+		"""replace returns False if specified item does not exist"""
+		self.items.active = ["foo", "bar", "baz"]
+		expected = False
+		self.assertEquals(expected, self.items.replace(3, "foo"))
+
 if __name__ == "__main__":
 	unittest.main()
 
