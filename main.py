@@ -45,7 +45,10 @@ class Items:
 		@return: item text
 		@rtype : str
 		"""
-		return self.active.pop(id)
+		try:
+			return self.active.pop(id)
+		except IndexError:
+			return False
 
 	def modify(self, id, text):
 		pass # TODO

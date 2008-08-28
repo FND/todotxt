@@ -42,18 +42,24 @@ class ItemsTestCase(unittest.TestCase):
 		expected = 0
 		self.assertEquals(expected, self.items.add("foo"))
 
-	def testRemoveRemovesItem(self):
+	def testRemoveDeletesItem(self):
 		"""remove deletes specified active item"""
 		self.items.active = ["foo", "bar", "baz"]
 		self.items.remove(1)
 		expected = ["foo", "baz"]
 		self.assertEquals(expected, self.items.active)
 
-	def testRemoveReturnsText(self):
+	def testRemoveReturnsOldText(self):
 		"""remove returns deleted item's text"""
 		self.items.active = ["foo", "bar", "baz"]
 		expected = "bar"
 		self.assertEquals(expected, self.items.remove(1))
+
+	def testRemoveReturnsFalseOnFailure(self):
+		"""remove returns False if specified item does not exist"""
+		self.items.active = ["foo", "bar", "baz"]
+		expected = False
+		self.assertEquals(expected, self.items.remove(3))
 
 if __name__ == "__main__":
 	unittest.main()
