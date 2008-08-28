@@ -1,8 +1,8 @@
 == Commands ==
 
-* add <str>					add task
-* append <ID> <str>			add <str> to the end of item <ID>
-* replace <ID> <str>		replace item <ID> with <str>
+* add <task>				add task
+* append <ID> <task>		add <task> to the end of item <ID>
+* replace <ID> <task>		replace item <ID> with <task>
 * pri <ID> <priority>		set <priority> for item <ID>
 * do <ID>					mark item <ID> as completed
 * rm <ID>					delete item <ID>
@@ -15,9 +15,17 @@
 
 * report					add the number of active and completed items to the report
 
+Legend:
+* <ID>			task ID (any integer)
+* <task>		task-description string (can contain nanoformats like priority, project, context etc.)
+* <priority>	task priority (any uppercase Latin letter; A-Z)
+* <terms>		space-separated list of filter terms
+* [...]		optional argument
+
 == Options ==
 
-* -p		plain mode (no colored output)
+* -c <task>		custom configuration file
+* -p			plain mode (no colored output)
 
 == Configuration Settings ==
 
