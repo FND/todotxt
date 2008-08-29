@@ -116,7 +116,7 @@ class Items:
 				self.active[id] = self.active[id].lstrip()
 			return self.active[id]
 		else:
-			raise ValueError, "invalid priority"
+			raise ValueError("invalid priority")
 
 	def archive(self, id):
 		pass # TODO
