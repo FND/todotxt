@@ -1,5 +1,6 @@
 import unittest
 import time
+import re
 import main
 
 class mainTestCase(unittest.TestCase):
@@ -37,6 +38,16 @@ class ItemsTestCase(unittest.TestCase):
 		"""__init__ initializes flag character"""
 		expected = "x"
 		self.assertEquals(expected, self.items.flagChar)
+
+	def testInitInitializesPriorityTemplate(self):
+		"""__init__ initializes priority template"""
+		expected = "(%s)"
+		self.assertEquals(expected, self.items.priorityTemplate)
+
+	def testInitInitializesPriorityValues(self):
+		"""__init__ initializes priority values"""
+		expected = "[A-Za-z]"
+		self.assertEquals(expected, self.items.priorityValues)
 
 	def testAddAppendsItem(self):
 		"""add creates new active item"""
@@ -131,6 +142,38 @@ class ItemsTestCase(unittest.TestCase):
 		"""flag raises IndexError if specified item does not exist"""
 		expected = IndexError
 		self.assertRaises(expected, self.items.flag, 3)
+
+	def testPrioritizeAddsPriorityPrefix(self):
+		"""prioritize adds priority as prefix"""
+		expected = "(A) ipsum"
+		self.assertEquals(expected, self.items.prioritize(1, "A"))
+
+	def testPrioritizeReplacesExistingPriority(self):
+		"""prioritize replaces existing priority"""
+		self.items.active[1] = "ipsum (B) foo"
+		expected = "(A) ipsum foo"
+		self.assertEquals(expected, self.items.prioritize(1, "A"))
+
+	def testPrioritizeSupportsRemovingPriority(self):
+		"""prioritize supports removing existing priority"""
+		self.items.active[1] = "(A) ipsum"
+		expected = "ipsum"
+		self.assertEquals(expected, self.items.prioritize(1, ""))
+
+	def testPrioritizeUsesUppercasePriorities(self):
+		"""prioritize uses uppercase for priorities"""
+		expected = "(A) ipsum"
+		self.assertEquals(expected, self.items.prioritize(1, "a"))
+
+	def testPrioritizeRaisesIndexErrorOnFailure(self):
+		"""prioritize raises IndexError if specified item does not exist"""
+		expected = IndexError
+		self.assertRaises(expected, self.items.prioritize, 3, "A")
+
+	def testPrioritizeRaisesValueErrorOnFailure(self):
+		"""prioritize raises ValueError if specified priority is invalid"""
+		expected = ValueError
+		self.assertRaises(expected, self.items.prioritize, 1, "foo")
 
 if __name__ == "__main__":
 	unittest.main()

@@ -13,6 +13,7 @@ Original Python port by Shane Koster.
 
 import sys
 import time
+import re
 
 def main(args = []):
 	return # TODO
@@ -22,6 +23,8 @@ class Items:
 		self.active = []
 		self.closed = []
 		self.flagChar = "x"
+		self.priorityTemplate = "(%s)"
+		self.priorityValues = "[A-Za-z]"
 
 	def get(self, source): # XXX: does not belong here?
 		pass # TODO
@@ -87,6 +90,33 @@ class Items:
 			date = time.strftime(timeFormat, time.localtime())
 		self.active[id] = "%s %s %s" % (self.flagChar, date, self.active[id])
 		return self.active[id]
+
+	def prioritize(self, id, priority):
+		"""
+		set priority of active item
+
+		@param id (int): item ID
+		@param priority (str): Latin letter (A-Z) or empty string
+		@return (str): new item text
+		@raise IndexError: item does not exist
+		@raise ValueError: invalid priority
+		"""
+		validPattern = re.compile(r"^%s$" % self.priorityValues)
+		isPriority = True if re.match(validPattern, priority) else False
+		if isPriority or priority == "":
+			if isPriority:
+				priorityStr = self.priorityTemplate % priority.upper()
+			else:
+				priorityStr = ""
+			priorityPattern = self.priorityTemplate.replace(r")", r"\)").replace(r"(", r"\(") % self.priorityValues
+			priorityPattern = re.compile(r"\s?%s|%s\s?" % (priorityPattern, priorityPattern))
+			self.active[id] = re.sub(priorityPattern, "", self.active[id])
+			self.active[id] = "%s %s" % (priorityStr, self.active[id])
+			if priority == "": # XXX: hacky?
+				self.active[id] = self.active[id].lstrip()
+			return self.active[id]
+		else:
+			raise ValueError, "invalid priority"
 
 	def archive(self, id):
 		pass # TODO
