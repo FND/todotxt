@@ -18,7 +18,6 @@
 == Misc. ==
 
 * code analysis (PyLint, PyChecker, PyFlakes)
-* split into separate modules
-** build script (merging modules into a single script file, consolidating import statments)
+* build script (merging modules into a single script file, consolidating import statments, startup code at the bottom)
 * license (BSD?)
 * i18n: move strings to separate object
