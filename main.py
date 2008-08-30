@@ -131,6 +131,29 @@ class Items: # TODO: move to dedicated module
 		else:
 			raise ValueError("invalid priority")
 
+	def filter(self, filters = [], includeClosed = False):
+		"""
+		filter items
+
+		@param filters (list): filter terms
+		@param includeClosed (bool): include closed items
+		@return (list): matching items
+		"""
+		items = self.active[:]
+		if includeClosed:
+			items.extend(self.closed)
+		return [i for i in items if containsAll(i, filters)]
+
+	def display(self, items, colored = True):
+		"""
+		display items
+
+		@param items (list): items
+		@param colored (bool): colored output
+		@return: None
+		"""
+		pass # TODO
+
 	def archive(self, id):
 		pass # TODO
 

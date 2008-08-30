@@ -194,6 +194,22 @@ class ItemsTestCase(unittest.TestCase):
 		expected = ValueError
 		self.assertRaises(expected, self.items.prioritize, 1, "foo")
 
+	def testFilterReturnsAllItemsForEmptyFilters(self):
+		"""filter returns all items if no filters have been specified"""
+		expected = ["lorem", "ipsum", "dolor"]
+		self.assertEquals(expected, self.items.filter())
+
+	def testFilterSupportsActiveAndClosedItems(self):
+		"""filter supports active and closed items"""
+		self.items.closed = ["sit", "amet"]
+		expected = ["lorem", "ipsum", "dolor", "sit", "amet"]
+		self.assertEquals(expected, self.items.filter(includeClosed = True))
+
+	def testFilterReturnsItemsMatchingAllFilters(self):
+		"""filter returns items matching all filter terms"""
+		expected = ["lorem", "dolor"]
+		self.assertEquals(expected, self.items.filter(["l", "o"]))
+
 if __name__ == "__main__":
 	unittest.main()
 
