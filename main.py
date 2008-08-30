@@ -44,16 +44,6 @@ def containsAll(seq, terms): # TODO: move to utils module
 			return False
 	return True
 
-def containsPattern(text, pattern): # TODO: move to utils module
-	"""
-	check whether a string contains a given pattern
-
-	@param text (str): string to investigate
-	@param pattern (str, SRE_Pattern): RegEx pattern
-	@return (bool): match
-	"""
-	return True if re.search(pattern, text) else False
-
 class Items: # TODO: move to dedicated module
 	def __init__(self):
 		self.active = []
@@ -138,14 +128,14 @@ class Items: # TODO: move to dedicated module
 		@raise IndexError: item does not exist
 		@raise ValueError: invalid priority
 		"""
-		isPriority = containsPattern(priority, r"^%s$" % self.priorityValues)
+		isPriority = re.compile(r"^%s$" % self.priorityValues).search(priority)
 		if not (isPriority or priority == ""):
 			raise ValueError("invalid priority")
 		if isPriority:
 			priorityStr = self.priorityTemplate % priority.upper()
 		else:
 			priorityStr = ""
-		self.active[id] = re.sub(self.priorityPattern, "", self.active[id])
+		self.active[id] = self.priorityPattern.sub("", self.active[id])
 		self.active[id] = "%s %s" % (priorityStr, self.active[id])
 		if priority == "": # XXX: hacky?
 			self.active[id] = self.active[id].lstrip()
@@ -168,7 +158,7 @@ class Items: # TODO: move to dedicated module
 				filters = [self.priorityTemplate % f.upper() for f in filters]
 				return [i for i in items if containsAny(i, filters)]
 			else:
-				return [i for i in items if containsPattern(i, self.priorityPattern)]
+				return [i for i in items if self.priorityPattern.search(i)]
 		else:
 			return [i for i in items if containsAll(i, filters)]
 

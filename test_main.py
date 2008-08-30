@@ -56,27 +56,6 @@ class containsAllTestCase(unittest.TestCase):
 		expected = False
 		self.assertEqual(expected, main.containsAll(seq, terms))
 
-class containsPatternTestCase(unittest.TestCase):
-	def setUp(self):
-		pass
-
-	def tearDown(self):
-		pass
-
-	def testReturnsTrueOnMatch(self):
-		"""containsPattern returns True if pattern is found"""
-		text = "foo"
-		pattern = r"[a-z]"
-		expected = True
-		self.assertEqual(expected, main.containsPattern(text, pattern))
-
-	def testReturnsFalseOnNoMatch(self):
-		"""containsPattern returns False if pattern is not found"""
-		text = "foo"
-		pattern = r"\d"
-		expected = False
-		self.assertEqual(expected, main.containsPattern(text, pattern))
-
 class ItemsTestCase(unittest.TestCase):
 	def setUp(self):
 		self.items = main.Items()
