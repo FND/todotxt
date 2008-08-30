@@ -1,6 +1,5 @@
 import unittest
 import time
-import re
 import main
 
 class mainTestCase(unittest.TestCase):
@@ -15,11 +14,31 @@ class mainTestCase(unittest.TestCase):
 		expected = None
 		self.assertEquals(expected, main.main())
 
+class containsAllTestCase(unittest.TestCase):
+	def setUp(self):
+		pass
+
+	def tearDown(self):
+		pass
+
+	def testMainReturnsTrueOnMatch(self):
+		"""containsAll returns True if all search terms are found"""
+		seq = "foo"
+		terms = ["f", "o"]
+		expected = True
+		self.assertEquals(expected, main.containsAll(seq, terms))
+
+	def testMainReturnsFalseOnPartialMatch(self):
+		"""containsAll returns True if not all search terms are found"""
+		seq = "foo"
+		terms = ["f", "o", "b"]
+		expected = False
+		self.assertEquals(expected, main.containsAll(seq, terms))
+
 class ItemsTestCase(unittest.TestCase):
 	def setUp(self):
 		self.items = main.Items()
 		self.items.active = ["lorem", "ipsum", "dolor"]
-		pass
 
 	def tearDown(self):
 		pass

@@ -18,7 +18,20 @@ import re
 def main(args = []):
 	return # TODO
 
-class Items:
+def containsAll(seq, terms): # TODO: move to utils module
+	"""
+	check whether a sequence contains all of the given terms
+
+	@param seq (str, list, tuple): sequence to investigate
+	@param terms (list, tuple): terms to match
+	@return (bool): match
+	"""
+	for t in terms:
+		if t not in seq:
+			return False
+	return True
+
+class Items: # TODO: move to dedicated module
 	def __init__(self):
 		self.active = []
 		self.closed = []
@@ -91,7 +104,7 @@ class Items:
 		self.active[id] = "%s %s %s" % (self.flagChar, date, self.active[id])
 		return self.active[id]
 
-	def prioritize(self, id, priority):
+	def prioritize(self, id, priority): # XXX: rewrite to be more elegant; disallow non-leading priorities?
 		"""
 		set priority of active item
 
