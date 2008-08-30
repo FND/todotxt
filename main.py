@@ -49,10 +49,9 @@ def containsPattern(text, pattern): # TODO: move to utils module
 	check whether a string contains a given pattern
 
 	@param text (str): string to investigate
-	@param pattern (str): RegEx pattern
+	@param pattern (str, SRE_Pattern): RegEx pattern
 	@return (bool): match
 	"""
-	pattern = re.compile(r"%s" % pattern)
 	return True if re.search(pattern, text) else False
 
 class Items: # TODO: move to dedicated module
@@ -139,7 +138,7 @@ class Items: # TODO: move to dedicated module
 		@raise IndexError: item does not exist
 		@raise ValueError: invalid priority
 		"""
-		isPriority = containsPattern(priority, "^%s$" % self.priorityValues)
+		isPriority = containsPattern(priority, r"^%s$" % self.priorityValues)
 		if not (isPriority or priority == ""):
 			raise ValueError("invalid priority")
 		if isPriority:
@@ -152,18 +151,26 @@ class Items: # TODO: move to dedicated module
 			self.active[id] = self.active[id].lstrip()
 		return self.active[id]
 
-	def filter(self, filters = [], includeClosed = False):
+	def filter(self, filters = [], prioritiesOnly = False, includeClosed = False):
 		"""
 		filter items
 
 		@param filters (list): filter terms
+		@param prioritiesOnly (bool): filter by priorities only
 		@param includeClosed (bool): include closed items
 		@return (list): matching items
 		"""
 		items = self.active[:]
 		if includeClosed:
 			items.extend(self.closed)
-		return [i for i in items if containsAll(i, filters)]
+		if prioritiesOnly:
+			if filters:
+				filters = [self.priorityTemplate % f.upper() for f in filters]
+				return [i for i in items if containsAny(i, filters)]
+			else:
+				return [i for i in items if containsPattern(i, self.priorityPattern)]
+		else:
+			return [i for i in items if containsAll(i, filters)]
 
 	def display(self, items, colored = True):
 		"""

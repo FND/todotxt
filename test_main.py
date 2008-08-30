@@ -66,7 +66,7 @@ class containsPatternTestCase(unittest.TestCase):
 	def testReturnsTrueOnMatch(self):
 		"""containsPattern returns True if pattern is found"""
 		text = "foo"
-		pattern = r"o{2}"
+		pattern = r"[a-z]"
 		expected = True
 		self.assertEqual(expected, main.containsPattern(text, pattern))
 
@@ -226,6 +226,24 @@ class ItemsTestCase(unittest.TestCase):
 		"""filter returns items matching all filter terms"""
 		expected = ["lorem", "dolor"]
 		self.assertEqual(expected, self.items.filter(["l", "o"]))
+
+	def testFilterReturnsPrioritizedItemsInPriorityMode(self):
+		"""filter returns all (and only) prioritized items in prioritiesOnly mode"""
+		self.items.active = ["(A) lorem", "ipsum", "(C) dolor"]
+		expected = ["(A) lorem", "(C) dolor"]
+		self.assertEqual(expected, self.items.filter(prioritiesOnly = True))
+
+	def testFilterReturnsItemsMatchingAnyPriority(self):
+		"""filter returns items matching any of the priorities specified in prioritiesOnly mode"""
+		self.items.active = ["(A) lorem", "(B) ipsum", "(C) dolor"]
+		expected = ["(A) lorem", "(C) dolor"]
+		self.assertEqual(expected, self.items.filter("AC", prioritiesOnly = True))
+
+	def testFilterConvertsPrioritiesToUppercase(self):
+		"""filter converts priorities to uppercase in prioritiesOnly mode"""
+		self.items.active = ["(A) lorem", "(B) ipsum", "(C) dolor"]
+		expected = ["(A) lorem", "(C) dolor"]
+		self.assertEqual(expected, self.items.filter("ac", prioritiesOnly = True))
 
 if __name__ == "__main__":
 	unittest.main()
