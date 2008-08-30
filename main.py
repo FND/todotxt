@@ -31,6 +31,17 @@ def containsAll(seq, terms): # TODO: move to utils module
 			return False
 	return True
 
+def containsPattern(text, pattern): # TODO: move to utils module
+	"""
+	check whether a string contains a given pattern
+
+	@param text (str): string to investigate
+	@param pattern (str): RegEx pattern
+	@return (bool): match
+	"""
+	pattern = re.compile(r"%s" % pattern)
+	return True if re.search(pattern, text) else False
+
 class Items: # TODO: move to dedicated module
 	def __init__(self):
 		self.active = []
@@ -38,6 +49,7 @@ class Items: # TODO: move to dedicated module
 		self.flagChar = "x"
 		self.priorityTemplate = "(%s)"
 		self.priorityValues = "[A-Za-z]"
+		self.priorityPattern = re.compile(r"\s?%s|%s\s?".replace("%s", "\([A-Za-z]\)"))
 
 	def get(self, source): # XXX: does not belong here?
 		pass # TODO
@@ -114,22 +126,18 @@ class Items: # TODO: move to dedicated module
 		@raise IndexError: item does not exist
 		@raise ValueError: invalid priority
 		"""
-		validPattern = re.compile(r"^%s$" % self.priorityValues)
-		isPriority = True if re.match(validPattern, priority) else False
-		if isPriority or priority == "":
-			if isPriority:
-				priorityStr = self.priorityTemplate % priority.upper()
-			else:
-				priorityStr = ""
-			priorityPattern = self.priorityTemplate.replace(r")", r"\)").replace(r"(", r"\(") % self.priorityValues
-			priorityPattern = re.compile(r"\s?%s|%s\s?" % (priorityPattern, priorityPattern))
-			self.active[id] = re.sub(priorityPattern, "", self.active[id])
-			self.active[id] = "%s %s" % (priorityStr, self.active[id])
-			if priority == "": # XXX: hacky?
-				self.active[id] = self.active[id].lstrip()
-			return self.active[id]
-		else:
+		isPriority = containsPattern(priority, "^%s$" % self.priorityValues)
+		if not (isPriority or priority == ""):
 			raise ValueError("invalid priority")
+		if isPriority:
+			priorityStr = self.priorityTemplate % priority.upper()
+		else:
+			priorityStr = ""
+		self.active[id] = re.sub(self.priorityPattern, "", self.active[id])
+		self.active[id] = "%s %s" % (priorityStr, self.active[id])
+		if priority == "": # XXX: hacky?
+			self.active[id] = self.active[id].lstrip()
+		return self.active[id]
 
 	def filter(self, filters = [], includeClosed = False):
 		"""

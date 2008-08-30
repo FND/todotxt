@@ -1,7 +1,7 @@
 == Basics ==
 
 * Items commands
-** list / listpri
+** listpri
 ** archive
 * Dispatch
 * Storage
@@ -15,7 +15,8 @@
 * RegEx support
 ** list-filtering
 ** replacing
-* memory logger (non-task items in separate file)
+* simple logger (non-task items in separate file)
+* GUI
 
 == Misc. ==
 

@@ -15,6 +15,12 @@
 
 * report					add the number of active and completed items to the report
 
+Aliases:
+* a		add
+* p		pri
+* ls	list
+* lsp	listpri
+
 Legend:
 * <ID>			task ID (any integer)
 * <task>		task-description string (can contain nanoformats like priority, project, context etc.)

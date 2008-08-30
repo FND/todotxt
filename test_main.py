@@ -21,19 +21,40 @@ class containsAllTestCase(unittest.TestCase):
 	def tearDown(self):
 		pass
 
-	def testMainReturnsTrueOnMatch(self):
+	def testReturnsTrueOnMatch(self):
 		"""containsAll returns True if all search terms are found"""
 		seq = "foo"
 		terms = ["f", "o"]
 		expected = True
 		self.assertEqual(expected, main.containsAll(seq, terms))
 
-	def testMainReturnsFalseOnPartialMatch(self):
+	def testReturnsFalseOnPartialMatch(self):
 		"""containsAll returns True if not all search terms are found"""
 		seq = "foo"
 		terms = ["f", "o", "b"]
 		expected = False
 		self.assertEqual(expected, main.containsAll(seq, terms))
+
+class containsPatternTestCase(unittest.TestCase):
+	def setUp(self):
+		pass
+
+	def tearDown(self):
+		pass
+
+	def testReturnsTrueOnMatch(self):
+		"""containsPattern returns True if pattern is found"""
+		text = "foo"
+		pattern = r"o{2}"
+		expected = True
+		self.assertEqual(expected, main.containsPattern(text, pattern))
+
+	def testReturnsFalseOnNoMatch(self):
+		"""containsPattern returns False if pattern is not found"""
+		text = "foo"
+		pattern = r"\d"
+		expected = False
+		self.assertEqual(expected, main.containsPattern(text, pattern))
 
 class ItemsTestCase(unittest.TestCase):
 	def setUp(self):
