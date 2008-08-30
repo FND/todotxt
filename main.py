@@ -14,35 +14,10 @@ Original Python port by Shane Koster.
 import sys
 import time
 import re
+import util
 
 def main(args = []):
 	return # TODO
-
-def containsAny(seq, terms): # TODO: move to utils module
-	"""
-	check whether a sequence contains any of the given terms
-
-	@param seq (str, list, tuple): sequence to investigate
-	@param terms (list, tuple): terms to match
-	@return (bool): match
-	"""
-	for t in terms:
-		if t in seq:
-			return True
-	return False
-
-def containsAll(seq, terms): # TODO: move to utils module
-	"""
-	check whether a sequence contains all of the given terms
-
-	@param seq (str, list, tuple): sequence to investigate
-	@param terms (list, tuple): terms to match
-	@return (bool): match
-	"""
-	for t in terms:
-		if t not in seq:
-			return False
-	return True
 
 class Items: # TODO: move to dedicated module
 	def __init__(self):
@@ -156,11 +131,11 @@ class Items: # TODO: move to dedicated module
 		if prioritiesOnly:
 			if filters:
 				filters = [self.priorityTemplate % f.upper() for f in filters]
-				return [i for i in items if containsAny(i, filters)]
+				return [i for i in items if util.containsAny(i, filters)]
 			else:
 				return [i for i in items if self.priorityPattern.search(i)]
 		else:
-			return [i for i in items if containsAll(i, filters)]
+			return [i for i in items if util.containsAll(i, filters)]
 
 	def display(self, items, colored = True):
 		"""
