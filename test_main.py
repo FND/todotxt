@@ -14,6 +14,27 @@ class mainTestCase(unittest.TestCase):
 		expected = None
 		self.assertEqual(expected, main.main())
 
+class containsAnyTestCase(unittest.TestCase):
+	def setUp(self):
+		pass
+
+	def tearDown(self):
+		pass
+
+	def testReturnsTrueOnPartialMatch(self):
+		"""containsAny returns True if a search term is found"""
+		seq = "foo"
+		terms = ["f", "b", "a"]
+		expected = True
+		self.assertEqual(expected, main.containsAny(seq, terms))
+
+	def testReturnsFalseOnNoMatch(self):
+		"""containsAny returns False if no search term is found"""
+		seq = "foo"
+		terms = ["b", "a", "r"]
+		expected = False
+		self.assertEqual(expected, main.containsAny(seq, terms))
+
 class containsAllTestCase(unittest.TestCase):
 	def setUp(self):
 		pass
@@ -29,7 +50,7 @@ class containsAllTestCase(unittest.TestCase):
 		self.assertEqual(expected, main.containsAll(seq, terms))
 
 	def testReturnsFalseOnPartialMatch(self):
-		"""containsAll returns True if not all search terms are found"""
+		"""containsAll returns False if not all search terms are found"""
 		seq = "foo"
 		terms = ["f", "o", "b"]
 		expected = False
