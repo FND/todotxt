@@ -12,10 +12,14 @@
 == Additional Features ==
 
 * scheduled tasks
+* RegEx support
+** list-filtering
+** replacing
 * memory logger (non-task items in separate file)
 
 == Misc. ==
 
+* code analysis (PyLint, PyChecker, PyFlakes)
 * split into separate modules
 ** build script (merging modules into a single script file, consolidating import statments)
 * license (BSD?)
