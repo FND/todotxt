@@ -22,16 +22,16 @@ Aliases:
 * lsp	listpri
 
 Legend:
-* <ID>			task ID (any integer)
-* <task>		task-description string (can contain nanoformats like priority, project, context etc.)
-* <priority>	task priority (any uppercase Latin letter; A-Z)
-* <terms>		space-separated list of filter terms
-* [...]		optional argument
+* <ID>				task ID (any integer)
+* <task>			task-description string (can contain nanoformats like priority, project, context etc.)
+* <priority>		task priority (any uppercase Latin letter; A-Z)
+* <terms>			space-separated list of filter terms
+* [...]				optional argument
 
 == Options ==
 
-* -c <task>		custom configuration file
-* -p			plain mode (no colored output)
+* -c <filepath>		custom configuration file
+* -p				plain mode (no colored output)
 
 == Configuration Settings ==
 
@@ -39,3 +39,4 @@ Legend:
 * colored output
 * priority colors
 * use UTC
+* flag char and timestamp

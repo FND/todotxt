@@ -11,9 +11,6 @@ class Items:
 		self.priorityValues = "[A-Za-z]"
 		self.priorityPattern = re.compile(r"\s?%s|%s\s?".replace("%s", "\([A-Za-z]\)"))
 
-	def get(self, source): # XXX: does not belong here?
-		pass # TODO
-
 	def add(self, text):
 		"""
 		add new active item
@@ -73,7 +70,7 @@ class Items:
 			date = time.strftime(timeFormat, time.gmtime())
 		else:
 			date = time.strftime(timeFormat, time.localtime())
-		self.active[id] = "%s %s %s" % (self.flagChar, date, self.active[id]) # XXX: concatenation more efficient?
+		self.active[id] = "%s %s %s" % (self.flagChar, date, self.active[id])
 		return self.active[id]
 
 	def prioritize(self, id, priority): # XXX: rewrite to be more elegant; disallow non-leading priorities?
@@ -86,7 +83,7 @@ class Items:
 		@raise IndexError: item does not exist
 		@raise ValueError: invalid priority
 		"""
-		isPriority = re.compile(r"^%s$" % self.priorityValues).search(priority) # XXX: concatenation more efficient?
+		isPriority = re.compile(r"^%s$" % self.priorityValues).search(priority)
 		if not (isPriority or priority == ""):
 			raise ValueError("invalid priority")
 		if isPriority:
@@ -94,7 +91,7 @@ class Items:
 		else:
 			priorityStr = ""
 		self.active[id] = self.priorityPattern.sub("", self.active[id])
-		self.active[id] = "%s %s" % (priorityStr, self.active[id]) # XXX: concatenation more efficient?
+		self.active[id] = "%s %s" % (priorityStr, self.active[id])
 		if priority == "": # XXX: hacky?
 			self.active[id] = self.active[id].lstrip()
 		return self.active[id]
@@ -120,7 +117,7 @@ class Items:
 		else:
 			return [i for i in items if util.containsAll(i, filters)]
 
-	def display(self, items, colored = True):
+	def display(self, items, colored = True): # XXX: does not belong here?
 		"""
 		display items
 
@@ -139,7 +136,7 @@ class Items:
 		@raise IndexError: item does not exist
 		"""
 		for i, item in enumerate(self.active):
-			if item.startswith("%s " % self.flagChar): # XXX: concatenation more efficient? 
+			if item.startswith("%s " % self.flagChar):
 				item = self.active.pop(i)
 				self.closed.append(item)
 
