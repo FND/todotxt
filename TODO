@@ -12,6 +12,7 @@
 * RegEx support
 ** list-filtering
 ** replacing
+* list nanoformats (e.g. projects, contexts)
 * simple logger (non-task items in separate file)
 * GUI
 

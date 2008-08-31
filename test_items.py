@@ -170,6 +170,20 @@ class ItemsTestCase(unittest.TestCase):
 		expected = ["(A) lorem", "(C) dolor"]
 		self.assertEqual(expected, self.items.filter("ac", prioritiesOnly = True))
 
+	def testArchivesRemovesItemFromActiveItems(self):
+		"""archive removes flagged items from list of active items"""
+		self.items.active = ["lorem", "x ipsum", "dolor"]
+		self.items.archive()
+		expected = ["lorem", "dolor"]
+		self.assertEqual(expected, self.items.active)
+
+	def testArchivesAddsItemToClosedItems(self):
+		"""archive adds flagged items to list of closed items"""
+		self.items.active = ["lorem", "x ipsum", "dolor"]
+		self.items.archive()
+		expected = ["x ipsum"]
+		self.assertEqual(expected, self.items.closed)
+
 if __name__ == "__main__":
 	unittest.main()
 

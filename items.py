@@ -2,7 +2,7 @@ import time
 import re
 import util
 
-class Items: # TODO: move to dedicated module
+class Items:
 	def __init__(self):
 		self.active = []
 		self.closed = []
@@ -73,7 +73,7 @@ class Items: # TODO: move to dedicated module
 			date = time.strftime(timeFormat, time.gmtime())
 		else:
 			date = time.strftime(timeFormat, time.localtime())
-		self.active[id] = "%s %s %s" % (self.flagChar, date, self.active[id])
+		self.active[id] = "%s %s %s" % (self.flagChar, date, self.active[id]) # XXX: concatenation more efficient?
 		return self.active[id]
 
 	def prioritize(self, id, priority): # XXX: rewrite to be more elegant; disallow non-leading priorities?
@@ -86,7 +86,7 @@ class Items: # TODO: move to dedicated module
 		@raise IndexError: item does not exist
 		@raise ValueError: invalid priority
 		"""
-		isPriority = re.compile(r"^%s$" % self.priorityValues).search(priority)
+		isPriority = re.compile(r"^%s$" % self.priorityValues).search(priority) # XXX: concatenation more efficient?
 		if not (isPriority or priority == ""):
 			raise ValueError("invalid priority")
 		if isPriority:
@@ -94,7 +94,7 @@ class Items: # TODO: move to dedicated module
 		else:
 			priorityStr = ""
 		self.active[id] = self.priorityPattern.sub("", self.active[id])
-		self.active[id] = "%s %s" % (priorityStr, self.active[id])
+		self.active[id] = "%s %s" % (priorityStr, self.active[id]) # XXX: concatenation more efficient?
 		if priority == "": # XXX: hacky?
 			self.active[id] = self.active[id].lstrip()
 		return self.active[id]
@@ -130,6 +130,16 @@ class Items: # TODO: move to dedicated module
 		"""
 		pass # TODO
 
-	def archive(self, id):
-		pass # TODO
+	def archive(self):
+		"""
+		move flagged items from active to closed
+
+		@param id (int): item ID
+		@return: None
+		@raise IndexError: item does not exist
+		"""
+		for i, item in enumerate(self.active):
+			if item.startswith("%s " % self.flagChar): # XXX: concatenation more efficient? 
+				item = self.active.pop(i)
+				self.closed.append(item)
 
