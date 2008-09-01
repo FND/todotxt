@@ -100,7 +100,7 @@ def dispatch(command, params):
 	cmds["lsp"] = cmds["listpri"]
 	# execute
 	if command in cmds:
-		params = [params] if params else [] # ensure params is not unpacked when passed as argument 
+		params = [params] if params else [] # ensure params is not unpacked when passed as argument
 		try:
 			cmds[command](*params)
 		except: # spurious params

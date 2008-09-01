@@ -1,5 +1,4 @@
 import unittest
-import time
 import main
 
 class mainTestCase(unittest.TestCase):

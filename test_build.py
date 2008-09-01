@@ -6,7 +6,7 @@ class retrieveTestCase(unittest.TestCase):
 		self.modules = ["foo", "bar"]
 		# mock file access
 		self.open = open
-		def mockOpen(name):
+		def mockOpen(name, mode = "r"):
 			key = name[:-3]
 			return dummyModules()[key].split("\n")
 		build.open = mockOpen
@@ -14,17 +14,17 @@ class retrieveTestCase(unittest.TestCase):
 	def tearDown(self):
 		build.open = self.open
 
-	def testReturnsTuple(self): # TODO
+	def testReturnsTuple(self):
 		"""retrieve returns tuple consisting of imports, startup and contents"""
 		expected = 3
 		self.assertEqual(expected, len(build.retrieve(self.modules)))
 
-	def testReturnsImports(self): # TODO
+	def testReturnsImports(self):
 		"""retrieve returns import statements"""
 		expected = ["import foo", "import bar", "import baz"]
 		self.assertEqual(expected, build.retrieve(self.modules)[0])
 
-	def testReturnsStartup(self): # TODO
+	def testReturnsStartup(self):
 		"""retrieve returns startup statements"""
 		expected = [
 			'if __name__ == "__main__":',
@@ -34,8 +34,8 @@ class retrieveTestCase(unittest.TestCase):
 		]
 		self.assertEqual(expected, build.retrieve(self.modules)[1])
 
-	def testReturnsContents(self): # TODO
-		"""retrieve returns module contents (excluding import and startup statements)"""
+	def testReturnsCallables(self):
+		"""retrieve returns callables (excluding import and startup statements)"""
 		expected = [
 			"# foo",
 			"",
