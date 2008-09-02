@@ -117,7 +117,7 @@ class Items:
 		else:
 			return [i for i in items if util.containsAll(i, filters)]
 
-	def display(self, items, colored = True): # XXX: does not belong here?
+	def display(self, items, colored = True): # XXX: does not belong here!?
 		"""
 		display items
 
@@ -149,4 +149,7 @@ class Items:
 			if item.startswith("%s " % self.flagChar):
 				item = self.active.pop(i)
 				self.closed.append(item)
+
+	def report(self): # XXX: does not belong here!?
+		pass # TODO
 

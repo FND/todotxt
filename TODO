@@ -1,6 +1,5 @@
 == Basics ==
 
-* Dispatch
 * Configuration
 * command-line options
 * help (cf. SPECS)
@@ -13,6 +12,9 @@
 ** replacing
 * list nanoformats (e.g. projects, contexts)
 * simple logger (non-task items in separate file)
+* alternative stores
+** TiddlyWeb
+** multi-store (simultaneously saving to two or more stores)
 * GUI
 
 == Misc. ==
