@@ -127,6 +127,16 @@ class Items:
 		"""
 		pass # TODO
 
+	def removeDuplicates(self):
+		"""
+		remove duplicate items
+
+		@return: None
+		"""
+		for item in self.active:
+			if self.active.count(item) > 1:
+				self.active.remove(item)
+
 	def archive(self):
 		"""
 		move flagged items from active to closed

@@ -170,6 +170,20 @@ class ItemsTestCase(unittest.TestCase):
 		expected = ["(A) lorem", "(C) dolor"]
 		self.assertEqual(expected, self.items.filter("ac", prioritiesOnly = True))
 
+	def testRemoveDuplicatesIdenticalItems(self):
+		"""removeDuplicates removes repeated occurrences of active items"""
+		self.items.active = ["lorem", "ipsum", "dolor", "ipsum", "sit", "ipsum", "amet", "dolor"]
+		self.items.removeDuplicates()
+		expected = set(["lorem", "ipsum", "dolor", "sit", "amet"])
+		self.assertEqual(expected, set(self.items.active))
+
+	def testRemoveDuplicatesRetainsLastClone(self):
+		"""removeDuplicates retains the last occurrence of each item"""
+		self.items.active = ["lorem", "ipsum", "dolor", "ipsum", "sit", "ipsum", "amet", "dolor"]
+		self.items.removeDuplicates()
+		expected = ["lorem", "sit", "ipsum", "amet", "dolor"]
+		self.assertEqual(expected, self.items.active)
+
 	def testArchivesRemovesItemFromActiveItems(self):
 		"""archive removes flagged items from list of active items"""
 		self.items.active = ["lorem", "x ipsum", "dolor"]
