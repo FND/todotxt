@@ -21,7 +21,12 @@ class retrieveTestCase(unittest.TestCase):
 
 	def testReturnsImports(self):
 		"""retrieve returns import statements"""
-		expected = ["import foo", "import bar", "import baz"]
+		expected = ["import baz"] # cf. testOmitsModuleImports
+		self.assertEqual(expected, build.retrieve(self.modules)[0])
+
+	def testOmitsModuleImports(self):
+		"""retrieve omits import statements for merged modules"""
+		expected = ["import baz"]
 		self.assertEqual(expected, build.retrieve(self.modules)[0])
 
 	def testReturnsStartup(self):
@@ -35,7 +40,7 @@ class retrieveTestCase(unittest.TestCase):
 		self.assertEqual(expected, build.retrieve(self.modules)[1])
 
 	def testReturnsCallables(self):
-		"""retrieve returns callables (excluding import and startup statements)"""
+		"""retrieve returns callables (excluding import and startup statements, as well as obsolete namespaces)"""
 		expected = [
 			"# foo",
 			"",
@@ -59,7 +64,7 @@ import foo
 import bar
 import baz
 
-def qux():
+def foo.qux():
 	pass
 
 if __name__ == "__main__":
@@ -69,7 +74,7 @@ if __name__ == "__main__":
 		"bar": """
 import bar
 
-def quux():
+def bar.quux():
 	pass
 """
 	}
