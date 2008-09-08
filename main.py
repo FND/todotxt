@@ -1,7 +1,7 @@
 import sys
 import commands
 
-def main(args = []):
+def main(args):
 	try:
 		dispatch(args[1], args[2:])
 	except IndexError:

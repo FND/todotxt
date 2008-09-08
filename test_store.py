@@ -5,7 +5,7 @@ import store
 
 class FileStoreTestCase(unittest.TestCase):
 	def setUp(self):
-		self.files = ["/tmp/foo", "/tmp/bar", "/tmp/baz"]
+		self.files = ["/tmp/test/foo", "/tmp/test/bar", "/tmp/test/baz"]
 		self.store = store.FileStore(*self.files)
 		try:
 			shutil.rmtree("/tmp/test/")

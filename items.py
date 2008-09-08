@@ -96,7 +96,7 @@ class Items:
 			self.active[id] = self.active[id].lstrip()
 		return self.active[id]
 
-	def filter(self, filters = [], prioritiesOnly = False, includeClosed = False):
+	def filter(self, filters = None, prioritiesOnly = False, includeClosed = False):
 		"""
 		filter items
 
@@ -115,7 +115,10 @@ class Items:
 			else:
 				return [i for i in items if self.priorityPattern.search(i)]
 		else:
-			return [i for i in items if util.containsAll(i, filters)]
+			if filters:
+				return [i for i in items if util.containsAll(i, filters)]
+			else:
+				return [i for i in items]
 
 	def display(self, items, colored = True): # XXX: does not belong here!?
 		"""

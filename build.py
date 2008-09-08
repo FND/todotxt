@@ -5,7 +5,7 @@ combine multiple modules into a single single script file
 import sys
 import re
 
-def main(args = []):
+def main(args):
 	cfg = {
 		"targetFile": "todo.py",
 		"modules": args[1:] or ["main", "commands", "items", "util"],
