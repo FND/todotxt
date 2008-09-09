@@ -18,7 +18,7 @@ class Items:
 		@param text (str): item text
 		@return (int): item index
 		"""
-		self.active.append(text)
+		self.active.append(text) # XXX: escape line breaks!?
 		return len(self.active) - 1
 
 	def remove(self, id):
@@ -40,7 +40,7 @@ class Items:
 		@return (str): new item text
 		@raise IndexError: item does not exist
 		"""
-		self.active[id] += text
+		self.active[id] += text # XXX: escape line breaks!?
 		return self.active[id]
 
 	def replace(self, id, text):
@@ -53,7 +53,7 @@ class Items:
 		@raise IndexError: item does not exist
 		"""
 		old = self.active[id]
-		self.active[id] = text
+		self.active[id] = text # XXX: escape line breaks!?
 		return old
 
 	def flag(self, id, useUTC = True):

@@ -31,7 +31,7 @@ def dispatch(command, params):
 	try:
 		cmd[command](*params)
 	except (NameError, TypeError): # unknown command or spurious parameters
-		cmd.help()
+		commands.help()
 
 if __name__ == "__main__":
 	sys.exit(main(sys.argv))

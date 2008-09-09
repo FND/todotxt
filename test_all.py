@@ -2,7 +2,7 @@ import sys
 import unittest
 import coverage
 
-def main(args = []):
+def main(args):
 	modules = [
 		"test_main",
 		#"test_commands",

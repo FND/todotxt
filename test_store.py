@@ -14,7 +14,7 @@ class FileStoreTestCase(unittest.TestCase):
 		os.mkdir("/tmp/test")
 		for filename in self.files:
 			f = open(filename, "w")
-			f.write("lorem ipsum\ndolor sit amet")
+			f.write("lorem ipsum\ndolor sit amet\n")
 			f.close()
 
 	def tearDown(self):
@@ -37,14 +37,14 @@ class FileStoreTestCase(unittest.TestCase):
 		"""put creates (or overrides) file"""
 		self.store.put("active", ["foo bar", "baz"], False)
 		contents = open(self.store.active).read()
-		expected = "foo bar\nbaz"
+		expected = "foo bar\nbaz\n"
 		self.assertEqual(expected, contents)
 
 	def testPutAppendsFile(self):
 		"""put appends file contents"""
 		self.store.put("active", ["foo bar", "baz"], True)
 		contents = open(self.store.active).read()
-		expected = "lorem ipsum\ndolor sit amet\nfoo bar\nbaz"
+		expected = "lorem ipsum\ndolor sit amet\nfoo bar\nbaz\n"
 		self.assertEqual(expected, contents)
 
 if __name__ == "__main__":

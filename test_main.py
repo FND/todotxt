@@ -11,7 +11,7 @@ class mainTestCase(unittest.TestCase):
 	def testMainReturnsNoneOnSuccess(self):
 		"""main returns None on success"""
 		expected = None
-		self.assertEqual(expected, main.main())
+		self.assertEqual(expected, main.main([]))
 
 if __name__ == "__main__":
 	unittest.main()

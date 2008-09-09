@@ -34,9 +34,9 @@ class FileStore:
 		filepath = getattr(self, entity)
 		if append:
 			f = open(filepath, "a")
-			f.write("\n%s" % "\n".join(items))
+			f.write("%s\n" % "\n".join(items))
 		else:
 			f = open(filepath, "w")
-			f.write("\n".join(items))
+			f.write("%s\n" % "\n".join(items))
 		f.close()
 
