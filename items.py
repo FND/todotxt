@@ -120,16 +120,6 @@ class Items:
 			else:
 				return [i for i in items]
 
-	def display(self, items, colored = True): # XXX: does not belong here!?
-		"""
-		display items
-
-		@param items (list): items
-		@param colored (bool): colored output
-		@return: None
-		"""
-		pass # TODO
-
 	def removeDuplicates(self):
 		"""
 		remove duplicate items
@@ -152,7 +142,4 @@ class Items:
 			if item.startswith("%s " % self.flagChar):
 				item = self.active.pop(i)
 				self.closed.append(item)
-
-	def report(self): # XXX: does not belong here!?
-		pass # TODO
 

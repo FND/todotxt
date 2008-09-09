@@ -1,5 +1,5 @@
 class FileStore: # XXX: should be subclass of generic Store; cf. commands.__init__
-	def __init__(self, active, closed, report):
+	def __init__(self, active, closed):
 		"""
 		@param active (str): filepath for active items
 		@param closed (str): filepath for closed items
@@ -8,7 +8,6 @@ class FileStore: # XXX: should be subclass of generic Store; cf. commands.__init
 		"""
 		self.active = active
 		self.closed = closed
-		self.report = report
 
 	def get(self, entity):
 		"""
@@ -21,7 +20,7 @@ class FileStore: # XXX: should be subclass of generic Store; cf. commands.__init
 		filepath = getattr(self, entity)
 		return [i.rstrip() for i in open(filepath, "r")]
 
-	def put(self, entity, items, append):
+	def put(self, entity, items, append = False):
 		"""
 		write data to file
 

@@ -5,7 +5,7 @@ import store
 
 class FileStoreTestCase(unittest.TestCase):
 	def setUp(self):
-		self.files = ["/tmp/test/foo", "/tmp/test/bar", "/tmp/test/baz"]
+		self.files = ["/tmp/test/foo", "/tmp/test/bar"]
 		self.store = store.FileStore(*self.files)
 		try:
 			shutil.rmtree("/tmp/test/")
@@ -21,12 +21,12 @@ class FileStoreTestCase(unittest.TestCase):
 		shutil.rmtree("/tmp/test/")
 
 	def testInitRequiresArguments(self):
-		"""__init__ requires arguments for active, closed and report"""
+		"""__init__ requires arguments for active and closed"""
 		expected = TypeError
 		self.assertRaises(expected, store.FileStore)
 		self.assertRaises(expected, store.FileStore, "foo")
-		self.assertRaises(expected, store.FileStore, "foo", "bar")
-		store.FileStore("foo", "bar", "baz")
+		self.assertRaises(expected, store.FileStore, "foo", "bar", "baz")
+		store.FileStore("foo", "bar")
 
 	def testGetReturnsFileContents(self):
 		"""get returns file contents as list of lines"""

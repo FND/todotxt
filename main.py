@@ -6,7 +6,7 @@ from store import FileStore
 
 def main(args):
 	items = Items()
-	store = FileStore("/tmp/active.txt", "/tmp/done.txt", "/tmp/report.txt") # TODO: to be read from config
+	store = FileStore("/tmp/active.txt", "/tmp/done.txt") # TODO: file paths to be read from config
 	commands = Commands(items, store)
 	try:
 		dispatch(commands, args[1], args[2:])
@@ -23,6 +23,7 @@ def dispatch(commands, command, params):
 		"flag": commands.flag,
 		"rmdup": commands.removeDuplicates,
 		"list": commands.list,
+		"listall": commands.listAll,
 		"listpri": commands.listPriorities,
 		"archive": commands.archive,
 		"report": commands.generateReport,
@@ -32,6 +33,7 @@ def dispatch(commands, command, params):
 	cmd["a"] = cmd["add"]
 	cmd["p"] = cmd["pri"]
 	cmd["ls"] = cmd["list"]
+	cmd["lsa"] = cmd["listall"]
 	cmd["lsp"] = cmd["listpri"]
 	try:
 		cmd[command](*params)
