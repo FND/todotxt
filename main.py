@@ -1,14 +1,19 @@
 import sys
-import commands
+
+from commands import Commands
+from items import Items
+from store import FileStore
 
 def main(args):
+	items = Items()
+	store = FileStore("/tmp/active.txt", "/tmp/done.txt", "/tmp/report.txt") # TODO: to be read from config
+	commands = Commands(items, store)
 	try:
-		dispatch(args[1], args[2:])
+		dispatch(commands, args[1], args[2:])
 	except IndexError:
 		commands.help()
 
-def dispatch(command, params):
-	commands = Commands()
+def dispatch(commands, command, params):
 	cmd = {
 		"add": commands.add,
 		"pri": commands.prioritize,

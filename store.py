@@ -1,4 +1,4 @@
-class FileStore:
+class FileStore: # XXX: should be subclass of generic Store; cf. commands.__init__
 	def __init__(self, active, closed, report):
 		"""
 		@param active (str): filepath for active items

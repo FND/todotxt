@@ -5,7 +5,7 @@ import coverage
 def main(args):
 	modules = [
 		"test_main",
-		#"test_commands",
+		"test_commands",
 		"test_items",
 		"test_store",
 		"test_util",
